@@ -5,22 +5,29 @@
 <title>__TITLE__</title>
 <style>
   :root {
-    --bg:#f4f6f7; --card-bg:#ffffff; --text:#1a2226; --muted:#64757c; --border:#d7dee1;
-    --accent:#0e6e7c; --accent-dark:#0a525c; --accent-bg:#e4f3f5;
+    --bg:#eff5f5; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
+    --accent:#276469; --accent-dark:#1a464a; --accent-bg:#e1eef0;
+    --navy:#10195f; --navy-bg:#e6e7f5;
     --pink-bg:#fdeef2; --pink-text:#a1315a; --blue-bg:#eaf1fb; --blue-text:#275c9c;
     --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08);
     color-scheme: light dark;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#14181a; --card-bg:#1f2528; --text:#eef2f3; --muted:#9fb0b5; --border:#3a4448;
-      --accent:#4fc3d1; --accent-dark:#7fd6e0; --accent-bg:#1c3339; --pink-bg:#3a2530; --pink-text:#e893b2;
+    :root { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
+      --accent:#4fb3ba; --accent-dark:#7fd6dc; --accent-bg:#173538;
+      --navy:#8891e0; --navy-bg:#20224a;
+      --pink-bg:#3a2530; --pink-text:#e893b2;
       --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
   }
-  :root[data-theme="dark"] { --bg:#14181a; --card-bg:#1f2528; --text:#eef2f3; --muted:#9fb0b5; --border:#3a4448;
-    --accent:#4fc3d1; --accent-dark:#7fd6e0; --accent-bg:#1c3339; --pink-bg:#3a2530; --pink-text:#e893b2;
+  :root[data-theme="dark"] { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
+    --accent:#4fb3ba; --accent-dark:#7fd6dc; --accent-bg:#173538;
+    --navy:#8891e0; --navy-bg:#20224a;
+    --pink-bg:#3a2530; --pink-text:#e893b2;
     --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
-  :root[data-theme="light"] { --bg:#f4f6f7; --card-bg:#ffffff; --text:#1a2226; --muted:#64757c; --border:#d7dee1;
-    --accent:#0e6e7c; --accent-dark:#0a525c; --accent-bg:#e4f3f5; --pink-bg:#fdeef2; --pink-text:#a1315a;
+  :root[data-theme="light"] { --bg:#eff5f5; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
+    --accent:#276469; --accent-dark:#1a464a; --accent-bg:#e1eef0;
+    --navy:#10195f; --navy-bg:#e6e7f5;
+    --pink-bg:#fdeef2; --pink-text:#a1315a;
     --blue-bg:#eaf1fb; --blue-text:#275c9c; --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08); }
 
   * { box-sizing: border-box; }
@@ -93,13 +100,16 @@
     background:var(--card-bg); overflow:hidden; flex:0 0 auto; position:relative;
   }
   .rc-card { border-top:1mm solid var(--accent); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.5mm; }
-  .rc-top { display:flex; align-items:center; gap:1.5mm; }
-  .logo-box { width:15mm; height:6mm; border-radius:1.2mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+  .rc-top { display:flex; align-items:flex-start; gap:2mm; }
+  .logo-box { width:21mm; height:8.5mm; border-radius:1.2mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
     background-size:contain; background-position:center; background-repeat:no-repeat; }
   body.has-logo .logo-box { border-style:solid; border-color:var(--border); background-image: var(--logo-url); }
   body.pdf-capture-no-logo .logo-box { background-image:none !important; border-style:dashed !important; }
-  .org-name { font-size:5.2pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1 1 auto; min-width:0; }
+  .head-text { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:0.4mm; padding-top:0.3mm; }
+  .org-name { font-size:5pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card-title { font-size:4.4pt; font-weight:600; letter-spacing:0.03em; color:var(--navy); text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .num-badge { font-size:5pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.4mm 1.8mm; border-radius:2.5mm; flex:0 0 auto; }
   .rc-mid { display:flex; gap:2mm; flex:1; align-items:center; min-height:0; }
   .rc-id { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1mm; }
@@ -111,7 +121,7 @@
   .qr-wrap { width:17mm; height:17mm; flex:0 0 auto; }
   .qr-wrap svg { width:100%; height:100%; display:block; }
 
-  .vc-card { border-top:1mm solid var(--muted); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.4mm; }
+  .vc-card { border-top:1mm solid var(--navy); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.4mm; }
   .vc-top { display:flex; justify-content:space-between; align-items:baseline; gap:2mm; font-size:5pt; color:var(--muted);
     border-bottom:0.2mm solid var(--border); padding-bottom:1mm; }
   .vc-num { font-weight:700; color:var(--accent-dark); flex:0 0 auto; }
@@ -299,7 +309,10 @@
     rc.innerHTML =
       '<div class="rc-top">' +
         '<div class="logo-box" aria-hidden="true"></div>' +
-        '<div class="org-name">VOTRE ORGANISATION</div>' +
+        '<div class="head-text">' +
+          '<div class="org-name">VOTRE ORGANISATION</div>' +
+          '<div class="card-title">Carte de b&eacute;n&eacute;ficiaire</div>' +
+        '</div>' +
         '<div class="num-badge">N&deg;' + esc(b.num) + '</div>' +
       '</div>' +
       '<div class="rc-mid">' +
