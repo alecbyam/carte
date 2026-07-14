@@ -44,7 +44,7 @@ def parse_tsv(path):
             qtys = [r[i].strip() if i < len(r) else "" for i in range(5, 13)]
             vpart = code_village_part(village)
             village_counters[vpart] = village_counters.get(vpart, 0) + 1
-            num = f"TF{vpart}-{village_counters[vpart]:02d}"
+            num = f"TF{vpart}-{village_counters[vpart]:03d}"
             rows.append({
                 "num": num, "nom": nom, "sexe": sexe,
                 "village": village, "chefferie": chefferie, "site": "", "statut": "",

@@ -290,7 +290,7 @@
     return (s || 'SIT').slice(0, 3);
   }
 
-  // Numero auto-genere = TF + 3 premieres lettres du village + numero sequentiel (propre a ce village), ex: TFJAL-01
+  // Numero auto-genere = TF + 3 premieres lettres du village + numero sequentiel (propre a ce village), ex: TFJAL-001
   function nextNum(village) {
     var prefix = 'TF' + codeVillagePart(village) + '-';
     var max = 0;
@@ -300,7 +300,7 @@
         if (!isNaN(n) && n > max) max = n;
       }
     });
-    return prefix + String(max + 1).padStart(2, '0');
+    return prefix + String(max + 1).padStart(3, '0');
   }
 
   // ---------- QR ----------
