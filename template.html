@@ -24,22 +24,40 @@
     --blue-bg:#eaf1fb; --blue-text:#275c9c; --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08); }
 
   * { box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family:"Segoe UI",system-ui,Arial,sans-serif; margin:0; padding:16px; }
+  body { background: var(--bg); color: var(--text); font-family:"Segoe UI",system-ui,Arial,sans-serif; margin:0; padding:20px 16px; }
 
-  .toolbar { max-width: 900px; margin: 0 auto 12px auto; background: var(--card-bg); border:1px solid var(--border);
-    border-radius: 10px; padding: 10px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; box-shadow: var(--shadow); }
-  .toolbar h1 { font-size: 0.92rem; margin:0; flex:1 1 200px; }
-  .toolbar .count { color: var(--muted); font-size: 0.78rem; white-space:nowrap; }
-  .toolbar input[type="text"] { flex:1 1 160px; padding:6px 9px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.82rem; }
-  .toolbar button { background:var(--accent); color:#fff; border:none; padding:7px 12px; border-radius:6px; font-size:0.8rem; cursor:pointer; white-space:nowrap; }
+  .page-header { max-width: 900px; margin: 0 auto 16px auto; display:flex; align-items:center; gap:14px; }
+  .ph-badge { flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:800; letter-spacing:0.02em; box-shadow: var(--shadow); }
+  .ph-text { flex:1 1 auto; min-width:0; }
+  .ph-text h1 { margin:0; font-size:1.15rem; font-weight:700; }
+  .ph-text p { margin:2px 0 0 0; font-size:0.78rem; color:var(--muted); }
+  .page-header .count { flex:0 0 auto; color:var(--accent-dark); background:var(--accent-bg); font-size:0.76rem; font-weight:600;
+    padding:4px 11px; border-radius:20px; white-space:nowrap; }
+
+  .section-card { max-width: 900px; margin: 0 auto 12px auto; background: var(--card-bg); border:1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow); }
+
+  .toolbar { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; justify-content:space-between; }
+  .tb-group { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .toolbar input[type="text"] { flex:1 1 160px; padding:7px 10px; border-radius:7px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.82rem; }
+  .toolbar button { background:var(--accent); color:#fff; border:none; padding:7px 13px; border-radius:7px; font-size:0.8rem; cursor:pointer; white-space:nowrap; transition:background .15s; }
   .toolbar button:hover { background: var(--accent-dark); }
   .toolbar button.secondary { background:transparent; color:var(--muted); border:1px solid var(--border); }
   .toolbar button.secondary:hover { color:var(--text); border-color:var(--muted); }
   .info { color:var(--muted); font-size:0.75rem; cursor:help; border:1px solid var(--border); border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; }
 
-  .add-wrap { max-width: 900px; margin: 0 auto 16px auto; background: var(--card-bg); border:1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
-  .add-wrap summary { cursor:pointer; font-size:0.86rem; font-weight:600; }
+  .section-card summary { cursor:pointer; font-size:0.88rem; font-weight:600; list-style:revert; }
+  .section-card summary::marker { color:var(--accent); }
+
+  .tpl-body { margin-top:10px; }
+  .tpl-body p { margin:0 0 10px 0; font-size:0.76rem; color:var(--muted); }
+  .tpl-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:8px; }
+  .tpl-btn { display:flex; flex-direction:column; align-items:flex-start; gap:2px; background:var(--bg); border:1px solid var(--border);
+    border-radius:8px; padding:9px 12px; cursor:pointer; font-size:0.8rem; font-weight:600; color:var(--text); text-align:left; }
+  .tpl-btn:hover { border-color:var(--accent); background:var(--accent-bg); }
+  .tpl-btn span { font-weight:400; font-size:0.7rem; color:var(--muted); }
+
   .add-form { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
   .add-form .field { display:flex; flex-direction:column; gap:2px; font-size:0.72rem; color:var(--muted); }
   .add-form .field.grow { flex:1 1 180px; }
@@ -50,9 +68,6 @@
   .add-form button[type="submit"] { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:6px; font-size:0.84rem; cursor:pointer; }
   .add-form button[type="submit"]:hover { background:var(--accent-dark); }
 
-  .import-wrap { max-width: 900px; margin: 0 auto 16px auto; background: var(--card-bg); border:1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
-  .import-wrap summary { cursor:pointer; font-size:0.86rem; font-weight:600; }
   .import-body { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; }
   .import-body p { flex:1 1 100%; margin:0 0 2px 0; font-size:0.74rem; color:var(--muted); }
   .import-body button { background:var(--accent); color:#fff; border:none; padding:7px 14px; border-radius:6px; font-size:0.82rem; cursor:pointer; }
@@ -75,7 +90,7 @@
   }
   .rc-card { border-top:1mm solid var(--accent); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.5mm; }
   .rc-top { display:flex; align-items:center; gap:1.5mm; }
-  .logo-box { width:6mm; height:6mm; border-radius:1.2mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+  .logo-box { width:15mm; height:6mm; border-radius:1.2mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
     background-size:contain; background-position:center; background-repeat:no-repeat; }
   body.has-logo .logo-box { border-style:solid; border-color:var(--border); background-image: var(--logo-url); }
   .org-name { font-size:5.2pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
@@ -116,7 +131,7 @@
   @page { size: 85.6mm 53.98mm; margin: 0; }
   @media print {
     body { padding:0; background:#fff; }
-    .toolbar, .add-wrap, .pair-actions { display:none !important; }
+    .page-header, .section-card, .pair-actions { display:none !important; }
     .card-list { max-width:100%; gap:0; }
     .card-pair { box-shadow:none; border:none; border-radius:0; padding:0; gap:0; }
     .rc-card, .vc-card { box-shadow:none; border-radius:0; page-break-after:always; break-after:page; width:85.6mm; height:53.98mm; }
@@ -128,18 +143,42 @@
 </head>
 <body>
 
-<div class="toolbar">
-  <h1>__TITLE__</h1>
+<header class="page-header">
+  <div class="ph-badge">CR80</div>
+  <div class="ph-text">
+    <h1>__TITLE__</h1>
+    <p>Cartes recto/verso avec QR code &mdash; 100% local, import Excel multi-fichiers, aucune donn&eacute;e envoy&eacute;e &agrave; un serveur.</p>
+  </div>
   <span class="count" id="countLabel">__COUNT__ b&eacute;n&eacute;ficiaires</span>
-  <input type="text" id="orgNameInput" placeholder="Nom de votre organisation">
-  <button id="logoBtn">Logo</button>
-  <input type="file" id="logoInput" accept="image/*" style="display:none">
-  <button id="removeLogoBtn" class="secondary">&times; Logo</button>
-  <button id="printAllBtn">Imprimer toutes les cartes</button>
-  <span class="info" title="Format CR80 (85,60 x 53,98 mm), norme des cartes ID/bancaires. Chaque carte = recto puis verso, prete pour une imprimante de cartes ou pour 'Enregistrer en PDF'. Logo hors-ligne : deposez un fichier logo.png a cote de ce fichier HTML, ou utilisez le bouton Logo. Toutes les donnees (cartes, logo, nom d'organisation) restent uniquement dans votre navigateur, sur cet ordinateur : rien n'est jamais envoye a un serveur.">?</span>
+</header>
+
+<div class="section-card toolbar">
+  <div class="tb-group">
+    <input type="text" id="orgNameInput" placeholder="Nom de votre organisation">
+    <button id="logoBtn">Logo</button>
+    <input type="file" id="logoInput" accept="image/*" style="display:none">
+    <button id="removeLogoBtn" class="secondary">&times; Logo</button>
+  </div>
+  <div class="tb-group">
+    <button id="printAllBtn">Imprimer toutes les cartes</button>
+    <span class="info" title="Format CR80 (85,60 x 53,98 mm), norme des cartes ID/bancaires. Chaque carte = recto puis verso, prete pour une imprimante de cartes ou pour 'Enregistrer en PDF'. Logo hors-ligne : deposez un fichier logo.png a cote de ce fichier HTML, ou utilisez le bouton Logo (une image large avec plusieurs logos bailleurs cote a cote est prise en charge). Toutes les donnees (cartes, logo, nom d'organisation) restent uniquement dans votre navigateur, sur cet ordinateur : rien n'est jamais envoye a un serveur.">?</span>
+  </div>
 </div>
 
-<details class="add-wrap" id="addWrap">
+<details class="section-card tpl-wrap" id="tplWrap">
+  <summary>&#128190; Mod&egrave;les Excel &agrave; t&eacute;l&eacute;charger</summary>
+  <div class="tpl-body">
+    <p>T&eacute;l&eacute;chargez le mod&egrave;le qui correspond &agrave; l'en-t&ecirc;te de votre feuille, remplissez-le (une ligne d'exemple est incluse), puis importez-le dans la section ci-dessous.</p>
+    <div class="tpl-grid">
+      <button type="button" class="tpl-btn" data-tpl="village">Mod&egrave;le &laquo;&nbsp;Village&nbsp;&raquo; <span>type Jalusene</span></button>
+      <button type="button" class="tpl-btn" data-tpl="code_benef">Mod&egrave;le &laquo;&nbsp;Code du b&eacute;n&eacute;f.&nbsp;&raquo; <span>type Alagi</span></button>
+      <button type="button" class="tpl-btn" data-tpl="code">Mod&egrave;le &laquo;&nbsp;Code&nbsp;&raquo; <span>type Draju</span></button>
+      <button type="button" class="tpl-btn" data-tpl="code_beneficiaire">Mod&egrave;le &laquo;&nbsp;Code du b&eacute;n&eacute;ficiaire&nbsp;&raquo; <span>type Feuille 1010</span></button>
+    </div>
+  </div>
+</details>
+
+<details class="section-card add-wrap" id="addWrap">
   <summary>+ Ajouter un b&eacute;n&eacute;ficiaire (g&eacute;n&egrave;re automatiquement sa carte CR80)</summary>
   <form class="add-form" id="addForm">
     <div class="field grow"><label for="fNom">Nom complet *</label><input type="text" id="fNom" required></div>
@@ -154,7 +193,7 @@
   </form>
 </details>
 
-<details class="import-wrap" id="importWrap">
+<details class="section-card import-wrap" id="importWrap">
   <summary>&#8593; Importer un fichier Excel (g&eacute;n&egrave;re les cartes de toutes les feuilles automatiquement)</summary>
   <div class="import-body">
     <p>Formats accept&eacute;s : .xlsx, .xls, .csv. Vous pouvez s&eacute;lectionner <strong>plusieurs fichiers &agrave; la fois</strong> (ex&nbsp;: un fichier par site de distribution) : toutes leurs feuilles sont lues, et les colonnes sont reconnues automatiquement (Nom, Sexe, Village, Chefferie, Site, articles) m&ecirc;me si leurs intitul&eacute;s varient d'un fichier &agrave; l'autre. Traitement 100% local dans votre navigateur : aucun fichier n'est jamais envoy&eacute; &agrave; un serveur.</p>
@@ -450,6 +489,74 @@
     el.textContent = text;
     el.className = 'import-status' + (cls ? ' ' + cls : '');
   }
+
+  // ---------- modeles Excel telechargeables (un par format de fiche) ----------
+  var ITEMS_FULL = [
+    'Bidon plastique de 20litre sans odeur',
+    'Kit lave main ( seau plastique 20 l avec robinet, petit bassin de 5 litre, 1 tabouret petit format et 1 tabouret moyen format)',
+    'Barre de savon bleu de 800gr',
+    'Gobelet plastique de 700ml',
+    "Piece d'etoffe wax",
+    'Aquatabs',
+    'Pot plastique pour le bébé',
+    'Sac vide avec visbilite bailleur '
+  ];
+  var ITEMS_FULL_LONGSAC = ITEMS_FULL.slice(0, 7).concat(['Sac vide avec visbilite bailleur de 100kgs pour 1527  benef']);
+  var EXAMPLE_QTY = [2, 1, 3, 3, 1, 1, 1, 1];
+
+  var TEMPLATE_DEFS = {
+    village: {
+      file: 'modele_village.xlsx',
+      sheet: 'Distribution',
+      headers: ['Village', 'Chefferie', 'Site of Distribution', 'Noms de bénéficiaire', 'Sexe'].concat(ITEMS_FULL, ['Signature']),
+      example: ['Mahagi', 'Jalusene', 'Jalusene-Centre', 'NOM Prénom (exemple à remplacer)', 'Femme'].concat(EXAMPLE_QTY, [''])
+    },
+    code_benef: {
+      file: 'modele_code_du_benef.xlsx',
+      sheet: 'Distribution',
+      headers: ['Code du benef', 'Chefferie', 'Site of Distribution', 'NOM ET POST NOM DU BENEFICIAIRE', 'Sexe'].concat(ITEMS_FULL, ['Signature']),
+      example: ['A001', 'Chefferie', 'Site', 'NOM Prénom (exemple à remplacer)', 'Femme'].concat(EXAMPLE_QTY, [''])
+    },
+    code: {
+      file: 'modele_code.xlsx',
+      sheet: 'Distribution',
+      headers: ['Code', 'Chefferie', 'Site of Distribution:', 'NOM ET POST NOM DU BENEFICIAIRE', 'Sexe'].concat(ITEMS_FULL, ['Signature']),
+      example: ['D001', 'Chefferie', 'Site', 'NOM Prénom (exemple à remplacer)', 'Homme'].concat(EXAMPLE_QTY, [''])
+    },
+    code_beneficiaire: {
+      file: 'modele_code_du_beneficiaire.xlsx',
+      sheet: 'Distribution',
+      headers: ['Code du beneficiaire', 'Chefferie', 'Site of Distribution', 'NOM ET POST NOM DU BENEFICIAIRE', 'Sexe'].concat(ITEMS_FULL_LONGSAC, ['Signature']),
+      example: ['F1010-01', 'Chefferie', 'Site', 'NOM Prénom (exemple à remplacer)', 'Femme'].concat(EXAMPLE_QTY, [''])
+    }
+  };
+
+  function buildTemplateWorkbookBytes(key) {
+    var def = TEMPLATE_DEFS[key];
+    if (!def) return null;
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.aoa_to_sheet([def.headers, def.example]);
+    XLSX.utils.book_append_sheet(wb, ws, def.sheet);
+    return { bytes: XLSX.write(wb, { type: 'array', bookType: 'xlsx' }), filename: def.file };
+  }
+
+  function downloadTemplate(key) {
+    var built = buildTemplateWorkbookBytes(key);
+    if (!built) return;
+    var blob = new Blob([built.bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = built.filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  document.querySelectorAll('.tpl-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { downloadTemplate(btn.dataset.tpl); });
+  });
 
   function readFileAsArrayBuffer(file) {
     return new Promise(function(resolve, reject) {
