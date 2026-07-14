@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>__TITLE__</title>
+<style>
+  :root {
+    --bg:#f4f6f7; --card-bg:#ffffff; --text:#1a2226; --muted:#64757c; --border:#d7dee1;
+    --accent:#0e6e7c; --accent-dark:#0a525c; --accent-bg:#e4f3f5;
+    --pink-bg:#fdeef2; --pink-text:#a1315a; --blue-bg:#eaf1fb; --blue-text:#275c9c;
+    --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14181a; --card-bg:#1f2528; --text:#eef2f3; --muted:#9fb0b5; --border:#3a4448;
+      --accent:#4fc3d1; --accent-dark:#7fd6e0; --accent-bg:#1c3339; --pink-bg:#3a2530; --pink-text:#e893b2;
+      --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
+  }
+  :root[data-theme="dark"] { --bg:#14181a; --card-bg:#1f2528; --text:#eef2f3; --muted:#9fb0b5; --border:#3a4448;
+    --accent:#4fc3d1; --accent-dark:#7fd6e0; --accent-bg:#1c3339; --pink-bg:#3a2530; --pink-text:#e893b2;
+    --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
+  :root[data-theme="light"] { --bg:#f4f6f7; --card-bg:#ffffff; --text:#1a2226; --muted:#64757c; --border:#d7dee1;
+    --accent:#0e6e7c; --accent-dark:#0a525c; --accent-bg:#e4f3f5; --pink-bg:#fdeef2; --pink-text:#a1315a;
+    --blue-bg:#eaf1fb; --blue-text:#275c9c; --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08); }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family:"Segoe UI",system-ui,Arial,sans-serif; margin:0; padding:16px; }
+
+  .toolbar { max-width: 900px; margin: 0 auto 12px auto; background: var(--card-bg); border:1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; box-shadow: var(--shadow); }
+  .toolbar h1 { font-size: 0.92rem; margin:0; flex:1 1 200px; }
+  .toolbar .count { color: var(--muted); font-size: 0.78rem; white-space:nowrap; }
+  .toolbar input[type="text"] { flex:1 1 160px; padding:6px 9px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.82rem; }
+  .toolbar button { background:var(--accent); color:#fff; border:none; padding:7px 12px; border-radius:6px; font-size:0.8rem; cursor:pointer; white-space:nowrap; }
+  .toolbar button:hover { background: var(--accent-dark); }
+  .toolbar button.secondary { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  .toolbar button.secondary:hover { color:var(--text); border-color:var(--muted); }
+  .info { color:var(--muted); font-size:0.75rem; cursor:help; border:1px solid var(--border); border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; }
+
+  .add-wrap { max-width: 900px; margin: 0 auto 16px auto; background: var(--card-bg); border:1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
+  .add-wrap summary { cursor:pointer; font-size:0.86rem; font-weight:600; }
+  .add-form { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .add-form .field { display:flex; flex-direction:column; gap:2px; font-size:0.72rem; color:var(--muted); }
+  .add-form .field.grow { flex:1 1 180px; }
+  .add-form input[type="text"], .add-form select { padding:6px 8px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.82rem; }
+  .qty-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; flex:1 1 100%; }
+  .qty-grid .field input { width:100%; padding:5px 6px; }
+  .add-form .submit-row { flex:1 1 100%; display:flex; justify-content:flex-end; margin-top:4px; }
+  .add-form button[type="submit"] { background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:6px; font-size:0.84rem; cursor:pointer; }
+  .add-form button[type="submit"]:hover { background:var(--accent-dark); }
+
+  .import-wrap { max-width: 900px; margin: 0 auto 16px auto; background: var(--card-bg); border:1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
+  .import-wrap summary { cursor:pointer; font-size:0.86rem; font-weight:600; }
+  .import-body { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px; }
+  .import-body p { flex:1 1 100%; margin:0 0 2px 0; font-size:0.74rem; color:var(--muted); }
+  .import-body button { background:var(--accent); color:#fff; border:none; padding:7px 14px; border-radius:6px; font-size:0.82rem; cursor:pointer; }
+  .import-body button:hover { background:var(--accent-dark); }
+  .import-body button.danger { background:transparent; color:var(--pink-text); border:1px solid var(--pink-text); }
+  .import-body button.danger:hover { background:var(--pink-bg); }
+  .import-status { flex:1 1 100%; font-size:0.76rem; color:var(--muted); min-height:1.1em; }
+  .import-status.ok { color:var(--accent-dark); }
+  .import-status.err { color:var(--pink-text); }
+
+  .card-list { max-width: 900px; margin: 0 auto; display:flex; flex-direction:column; gap:8px; }
+  .card-pair { display:flex; align-items:center; gap:6px; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:6px; box-shadow: var(--shadow); flex-wrap:wrap; }
+  .pair-actions { display:flex; flex-direction:column; gap:4px; margin-left:auto; }
+  .pair-actions button { background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:6px; padding:5px 10px; font-size:0.72rem; cursor:pointer; white-space:nowrap; }
+  .pair-actions button:hover { color:var(--text); border-color:var(--accent); }
+
+  .rc-card, .vc-card {
+    width:85.6mm; height:53.98mm; border-radius:3.18mm; border:0.25mm solid var(--border);
+    background:var(--card-bg); overflow:hidden; flex:0 0 auto; position:relative;
+  }
+  .rc-card { border-top:1mm solid var(--accent); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.5mm; }
+  .rc-top { display:flex; align-items:center; gap:1.5mm; }
+  .logo-box { width:6mm; height:6mm; border-radius:1.2mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+    background-size:contain; background-position:center; background-repeat:no-repeat; }
+  body.has-logo .logo-box { border-style:solid; border-color:var(--border); background-image: var(--logo-url); }
+  .org-name { font-size:5.2pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1 1 auto; min-width:0; }
+  .num-badge { font-size:5pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.4mm 1.8mm; border-radius:2.5mm; flex:0 0 auto; }
+  .rc-mid { display:flex; gap:2mm; flex:1; align-items:center; min-height:0; }
+  .rc-id { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1mm; }
+  .rc-name { font-size:8pt; font-weight:700; line-height:1.15; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .sexe-pill { font-size:4.6pt; font-weight:700; padding:0.3mm 1.6mm; border-radius:2.5mm; text-transform:uppercase; display:inline-block; width:fit-content; }
+  .sexe-f { background:var(--pink-bg); color:var(--pink-text); }
+  .sexe-m { background:var(--blue-bg); color:var(--blue-text); }
+  .loc-row { font-size:5.4pt; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .qr-wrap { width:17mm; height:17mm; flex:0 0 auto; }
+  .qr-wrap svg { width:100%; height:100%; display:block; }
+
+  .vc-card { border-top:1mm solid var(--muted); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.4mm; }
+  .vc-top { display:flex; justify-content:space-between; align-items:baseline; gap:2mm; font-size:5pt; color:var(--muted);
+    border-bottom:0.2mm solid var(--border); padding-bottom:1mm; }
+  .vc-num { font-weight:700; color:var(--accent-dark); flex:0 0 auto; }
+  .vc-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:right; }
+  .chip-grid { display:grid; grid-template-columns:1fr 1fr; gap:1mm 2mm; flex:1; align-content:center; }
+  .chip { display:flex; justify-content:space-between; align-items:center; background:var(--bg); border:0.2mm solid var(--border);
+    border-radius:1.3mm; padding:0.7mm 1.6mm; }
+  .chip-label { font-size:5pt; }
+  .chip-qty { font-size:5.2pt; font-weight:700; color:var(--accent-dark); }
+  .vc-bottom { display:flex; flex-direction:column; gap:1mm; }
+  .sign-row { display:flex; gap:3mm; }
+  .sign-box { flex:1; }
+  .sign-label { font-size:4pt; color:var(--muted); margin-bottom:2.8mm; }
+  .sign-line { border-bottom:0.2mm solid var(--border); height:0.3mm; }
+  .date-row { font-size:4.3pt; color:var(--muted); }
+
+  .new-flash { animation: flash 1.6s ease-out; }
+  @keyframes flash { 0% { box-shadow: 0 0 0 2px var(--accent); } 100% { box-shadow: var(--shadow); } }
+
+  .empty-hint { text-align:center; color:var(--muted); font-size:0.8rem; padding:20px; }
+
+  @page { size: 85.6mm 53.98mm; margin: 0; }
+  @media print {
+    body { padding:0; background:#fff; }
+    .toolbar, .add-wrap, .pair-actions { display:none !important; }
+    .card-list { max-width:100%; gap:0; }
+    .card-pair { box-shadow:none; border:none; border-radius:0; padding:0; gap:0; }
+    .rc-card, .vc-card { box-shadow:none; border-radius:0; page-break-after:always; break-after:page; width:85.6mm; height:53.98mm; }
+    .card-pair:last-child .vc-card { page-break-after:auto; break-after:auto; }
+    body.print-one .card-pair { display:none !important; }
+    body.print-one .card-pair.print-target { display:flex !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>__TITLE__</h1>
+  <span class="count" id="countLabel">__COUNT__ b&eacute;n&eacute;ficiaires</span>
+  <input type="text" id="orgNameInput" placeholder="Nom de votre organisation">
+  <button id="logoBtn">Logo</button>
+  <input type="file" id="logoInput" accept="image/*" style="display:none">
+  <button id="removeLogoBtn" class="secondary">&times; Logo</button>
+  <button id="printAllBtn">Imprimer toutes les cartes</button>
+  <span class="info" title="Format CR80 (85,60 x 53,98 mm), norme des cartes ID/bancaires. Chaque carte = recto puis verso, prete pour une imprimante de cartes ou pour 'Enregistrer en PDF'. Logo hors-ligne : deposez un fichier logo.png a cote de ce fichier HTML, ou utilisez le bouton Logo. Toutes les donnees (cartes, logo, nom d'organisation) restent uniquement dans votre navigateur, sur cet ordinateur : rien n'est jamais envoye a un serveur.">?</span>
+</div>
+
+<details class="add-wrap" id="addWrap">
+  <summary>+ Ajouter un b&eacute;n&eacute;ficiaire (g&eacute;n&egrave;re automatiquement sa carte CR80)</summary>
+  <form class="add-form" id="addForm">
+    <div class="field grow"><label for="fNom">Nom complet *</label><input type="text" id="fNom" required></div>
+    <div class="field"><label for="fSexe">Sexe</label>
+      <select id="fSexe"><option value="Femme">Femme</option><option value="Homme">Homme</option></select>
+    </div>
+    <div class="field grow"><label for="fVillage">Village</label><input type="text" id="fVillage" value=""></div>
+    <div class="field grow"><label for="fChefferie">Chefferie</label><input type="text" id="fChefferie" value=""></div>
+    <div class="field grow"><label for="fSite">Site de distribution</label><input type="text" id="fSite" value=""></div>
+    <div class="qty-grid" id="qtyGrid"></div>
+    <div class="submit-row"><button type="submit">G&eacute;n&eacute;rer la carte</button></div>
+  </form>
+</details>
+
+<details class="import-wrap" id="importWrap">
+  <summary>&#8593; Importer un fichier Excel (g&eacute;n&egrave;re les cartes de toutes les feuilles automatiquement)</summary>
+  <div class="import-body">
+    <p>Formats accept&eacute;s : .xlsx, .xls, .csv. Toutes les feuilles du classeur sont lues ; les colonnes sont reconnues automatiquement (Nom, Sexe, Village, Chefferie, Site, articles) m&ecirc;me si leurs intitul&eacute;s varient l&eacute;g&egrave;rement d'une feuille &agrave; l'autre. Traitement 100% local dans votre navigateur : le fichier n'est jamais envoy&eacute; &agrave; un serveur.</p>
+    <button id="importBtn" type="button">Choisir un fichier Excel</button>
+    <input type="file" id="importInput" accept=".xlsx,.xls,.csv" style="display:none">
+    <button id="clearAllBtn" type="button" class="danger">Vider la liste</button>
+    <div class="import-status" id="importStatus"></div>
+  </div>
+</details>
+
+<div class="card-list" id="cardList"></div>
+
+<script>__QR_LIB__</script>
+<script>__QR_UTF8__</script>
+<script>__XLSX_LIB__</script>
+<script>
+(function() {
+  "use strict";
+  var STORAGE_KEY = "carte_beneficiaires_v1";
+  var LOGO_KEY = "carte_logo_dataurl";
+  var ORG_KEY = "carte_org_name";
+  var SEED = __SEED_JSON__;
+  var ITEMS_SHORT = __ITEMS_JSON__;
+  var DEFAULT_QTY = [2,1,3,3,1,1,1,1];
+  var root = document.documentElement;
+  var cardList = document.getElementById('cardList');
+
+  // ---------- storage (avec repli memoire si localStorage est indisponible, ex. file:// bloque) ----------
+  var storage = (function() {
+    try {
+      var t = '__storage_test__';
+      window.localStorage.setItem(t, '1');
+      window.localStorage.removeItem(t);
+      return window.localStorage;
+    } catch (e) {
+      console.warn('localStorage indisponible, les donnees ne seront pas memorisees entre les sessions.', e);
+      var mem = {};
+      return {
+        getItem: function(k) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+        setItem: function(k, v) { mem[k] = String(v); },
+        removeItem: function(k) { delete mem[k]; }
+      };
+    }
+  })();
+
+  // ---------- data ----------
+  function loadData() {
+    var raw = storage.getItem(STORAGE_KEY);
+    if (raw) { try { var d = JSON.parse(raw); if (Array.isArray(d) && d.length) return d; } catch (e) {} }
+    storage.setItem(STORAGE_KEY, JSON.stringify(SEED));
+    return SEED.slice();
+  }
+  function saveData() { storage.setItem(STORAGE_KEY, JSON.stringify(beneficiaires)); }
+  var beneficiaires = loadData();
+
+  function nextNum() {
+    var max = 0;
+    beneficiaires.forEach(function(b) { var n = parseInt(b.num, 10); if (!isNaN(n) && n > max) max = n; });
+    return String(max + 1).padStart(3, '0');
+  }
+
+  // ---------- QR ----------
+  function qrSvg(text) {
+    var qr = qrcode(0, 'L');
+    qr.addData(text);
+    qr.make();
+    return qr.createSvgTag({ scalable: true, margin: 2 });
+  }
+
+  // ---------- render ----------
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function locLine(b) {
+    var parts = [b.village, b.chefferie, b.site].map(function(s) { return (s || '').trim(); }).filter(Boolean);
+    var seen = {}; var out = [];
+    parts.forEach(function(p) { var k = p.toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(p); } });
+    return out.join(' · ');
+  }
+
+  function buildPair(b) {
+    var sexeClass = /^f/i.test(b.sexe) ? 'sexe-f' : 'sexe-m';
+    var qrData = 'N' + b.num + ' - ' + b.nom + ' - ' + locLine(b);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'card-pair';
+    wrap.dataset.num = b.num;
+
+    var rc = document.createElement('div');
+    rc.className = 'rc-card';
+    rc.innerHTML =
+      '<div class="rc-top">' +
+        '<div class="logo-box" aria-hidden="true"></div>' +
+        '<div class="org-name">VOTRE ORGANISATION</div>' +
+        '<div class="num-badge">N&deg;' + esc(b.num) + '</div>' +
+      '</div>' +
+      '<div class="rc-mid">' +
+        '<div class="rc-id">' +
+          '<div class="rc-name">' + esc(b.nom) + '</div>' +
+          '<span class="sexe-pill ' + sexeClass + '">' + esc(b.sexe) + '</span>' +
+          '<div class="loc-row">' + esc(locLine(b)) + '</div>' +
+        '</div>' +
+        '<div class="qr-wrap">' + qrSvg(qrData) + '</div>' +
+      '</div>';
+
+    var chips = ITEMS_SHORT.map(function(label, i) {
+      var qty = (b.qtys && b.qtys[i] !== undefined && b.qtys[i] !== '') ? b.qtys[i] : '-';
+      return '<div class="chip"><span class="chip-label">' + esc(label) + '</span><span class="chip-qty">&times;' + esc(qty) + '</span></div>';
+    }).join('');
+
+    var vc = document.createElement('div');
+    vc.className = 'vc-card';
+    vc.innerHTML =
+      '<div class="vc-top"><span class="vc-num">N&deg;' + esc(b.num) + '</span><span class="vc-name">' + esc(b.nom) + '</span></div>' +
+      '<div class="chip-grid">' + chips + '</div>' +
+      '<div class="vc-bottom">' +
+        '<div class="sign-row">' +
+          '<div class="sign-box"><div class="sign-label">Signature b&eacute;n&eacute;ficiaire</div><div class="sign-line"></div></div>' +
+          '<div class="sign-box"><div class="sign-label">Agent distributeur</div><div class="sign-line"></div></div>' +
+        '</div>' +
+        '<div class="date-row">Date&nbsp;: ____ / ____ / ________</div>' +
+      '</div>';
+
+    var actions = document.createElement('div');
+    actions.className = 'pair-actions';
+    var pdfBtn = document.createElement('button');
+    pdfBtn.type = 'button';
+    pdfBtn.textContent = 'PDF';
+    pdfBtn.title = 'Imprimer / enregistrer cette carte en PDF (format CR80)';
+    pdfBtn.addEventListener('click', function() { printOne(wrap); });
+    actions.appendChild(pdfBtn);
+
+    wrap.appendChild(rc);
+    wrap.appendChild(vc);
+    wrap.appendChild(actions);
+    return wrap;
+  }
+
+  function renderAll() {
+    cardList.innerHTML = '';
+    if (!beneficiaires.length) {
+      cardList.innerHTML = '<div class="empty-hint">Aucun b&eacute;n&eacute;ficiaire. Importez un fichier Excel ou utilisez le formulaire ci-dessus pour en ajouter.</div>';
+    } else {
+      beneficiaires.forEach(function(b) { cardList.appendChild(buildPair(b)); });
+    }
+    document.getElementById('countLabel').textContent = beneficiaires.length + ' bénéficiaires';
+    applyOrgName(document.getElementById('orgNameInput').value);
+  }
+
+  function printOne(pairEl) {
+    document.body.classList.add('print-one');
+    pairEl.classList.add('print-target');
+    window.print();
+  }
+  window.addEventListener('afterprint', function() {
+    document.body.classList.remove('print-one');
+    document.querySelectorAll('.print-target').forEach(function(el) { el.classList.remove('print-target'); });
+  });
+  document.getElementById('printAllBtn').addEventListener('click', function() { window.print(); });
+
+  // ---------- add-beneficiary form ----------
+  var qtyGrid = document.getElementById('qtyGrid');
+  ITEMS_SHORT.forEach(function(label, i) {
+    var field = document.createElement('div');
+    field.className = 'field';
+    field.innerHTML = '<label>' + esc(label) + '</label><input type="text" inputmode="numeric" value="' + DEFAULT_QTY[i] + '">';
+    qtyGrid.appendChild(field);
+  });
+
+  document.getElementById('addForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var nom = document.getElementById('fNom').value.trim();
+    if (!nom) return;
+    var sexe = document.getElementById('fSexe').value;
+    var village = document.getElementById('fVillage').value.trim();
+    var chefferie = document.getElementById('fChefferie').value.trim();
+    var site = document.getElementById('fSite').value.trim();
+    var qtys = Array.prototype.map.call(qtyGrid.querySelectorAll('input'), function(inp) { return inp.value.trim(); });
+
+    var b = { num: nextNum(), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, qtys: qtys };
+    beneficiaires.push(b);
+    saveData();
+
+    if (cardList.querySelector('.empty-hint')) cardList.innerHTML = '';
+    var pair = buildPair(b);
+    pair.classList.add('new-flash');
+    cardList.appendChild(pair);
+    document.getElementById('countLabel').textContent = beneficiaires.length + ' bénéficiaires';
+    if (typeof pair.scrollIntoView === 'function') pair.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    document.getElementById('fNom').value = '';
+    document.getElementById('fNom').focus();
+  });
+
+  // ---------- import Excel ----------
+  var COMBINING_MARKS_RE = new RegExp('[' + String.fromCharCode(768) + '-' + String.fromCharCode(879) + ']', 'g');
+  function norm(s) {
+    return String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(COMBINING_MARKS_RE, '').trim();
+  }
+
+  var COLUMN_RULES = [
+    { field: 'code', test: function(h) { return h.indexOf('code') !== -1; } },
+    { field: 'nom', test: function(h) { return h.indexOf('nom') !== -1; } },
+    { field: 'sexe', test: function(h) { return h === 'sexe' || h.indexOf('sexe') !== -1; } },
+    { field: 'village', test: function(h) { return h.indexOf('village') !== -1; } },
+    { field: 'chefferie', test: function(h) { return h.indexOf('chefferie') !== -1; } },
+    { field: 'site', test: function(h) { return h.indexOf('site') !== -1; } },
+    { field: 'signature', test: function(h) { return h.indexOf('signature') !== -1; } },
+    { field: 'item0', test: function(h) { return h.indexOf('bidon') !== -1; } },
+    { field: 'item1', test: function(h) { return h.indexOf('lave main') !== -1 || h.indexOf('lave-main') !== -1 || (h.indexOf('kit') !== -1 && h.indexOf('seau') !== -1); } },
+    { field: 'item2', test: function(h) { return h.indexOf('savon') !== -1; } },
+    { field: 'item3', test: function(h) { return h.indexOf('gobelet') !== -1; } },
+    { field: 'item4', test: function(h) { return h.indexOf('etoffe') !== -1 || h.indexOf('wax') !== -1; } },
+    { field: 'item5', test: function(h) { return h.indexOf('aquatab') !== -1; } },
+    { field: 'item6', test: function(h) { return h.indexOf('pot') !== -1 && (h.indexOf('beb') !== -1 || h.indexOf('bb') !== -1); } },
+    { field: 'item7', test: function(h) { return h.indexOf('sac') !== -1; } }
+  ];
+
+  function detectColumns(headerRow) {
+    var map = {};
+    headerRow.forEach(function(cell, idx) {
+      var h = norm(cell);
+      if (!h) return;
+      for (var i = 0; i < COLUMN_RULES.length; i++) {
+        if (map[COLUMN_RULES[i].field] === undefined && COLUMN_RULES[i].test(h)) {
+          map[COLUMN_RULES[i].field] = idx;
+          return;
+        }
+      }
+    });
+    return map;
+  }
+
+  function findHeaderRowIndex(rows2d) {
+    for (var i = 0; i < Math.min(rows2d.length, 15); i++) {
+      var normed = (rows2d[i] || []).map(norm);
+      if (normed.indexOf('sexe') !== -1) return i;
+    }
+    return -1;
+  }
+
+  function importWorkbook(workbook) {
+    var added = 0;
+    var perSheet = [];
+    var skipped = [];
+
+    workbook.SheetNames.forEach(function(sheetName) {
+      var sheet = workbook.Sheets[sheetName];
+      var rows2d = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false });
+      var headerIdx = findHeaderRowIndex(rows2d);
+      if (headerIdx === -1) { skipped.push(sheetName); return; }
+
+      var cols = detectColumns(rows2d[headerIdx]);
+      if (cols.nom === undefined || cols.sexe === undefined) { skipped.push(sheetName); return; }
+
+      var sheetCount = 0;
+      for (var r = headerIdx + 1; r < rows2d.length; r++) {
+        var row = rows2d[r];
+        if (!row) continue;
+        var nom = cols.nom !== undefined ? String(row[cols.nom] || '').trim() : '';
+        if (!nom) continue;
+
+        var qtys = [];
+        for (var qi = 0; qi < 8; qi++) {
+          var ci = cols['item' + qi];
+          qtys.push(ci !== undefined ? String(row[ci] || '').trim() : '');
+        }
+
+        var code = cols.code !== undefined ? String(row[cols.code] || '').trim() : '';
+        var b = {
+          num: code || nextNum(),
+          nom: nom,
+          sexe: cols.sexe !== undefined ? String(row[cols.sexe] || '').trim() : '',
+          village: cols.village !== undefined ? String(row[cols.village] || '').trim() : '',
+          chefferie: cols.chefferie !== undefined ? String(row[cols.chefferie] || '').trim() : '',
+          site: cols.site !== undefined ? String(row[cols.site] || '').trim() : '',
+          qtys: qtys
+        };
+        beneficiaires.push(b);
+        sheetCount++;
+        added++;
+      }
+      if (sheetCount > 0) perSheet.push(sheetName + ' (' + sheetCount + ')');
+      else skipped.push(sheetName);
+    });
+
+    return { added: added, perSheet: perSheet, skipped: skipped };
+  }
+
+  function setImportStatus(text, cls) {
+    var el = document.getElementById('importStatus');
+    el.textContent = text;
+    el.className = 'import-status' + (cls ? ' ' + cls : '');
+  }
+
+  document.getElementById('importBtn').addEventListener('click', function() { document.getElementById('importInput').click(); });
+  document.getElementById('importInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    setImportStatus('Lecture de ' + file.name + '...');
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var data = new Uint8Array(ev.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var result = importWorkbook(workbook);
+        if (result.added > 0) {
+          saveData();
+          if (cardList.querySelector('.empty-hint')) cardList.innerHTML = '';
+          var frag = document.createDocumentFragment();
+          beneficiaires.slice(beneficiaires.length - result.added).forEach(function(b) {
+            var pair = buildPair(b);
+            pair.classList.add('new-flash');
+            frag.appendChild(pair);
+          });
+          cardList.appendChild(frag);
+          document.getElementById('countLabel').textContent = beneficiaires.length + ' bénéficiaires';
+        }
+        var msg = result.added + ' bénéficiaire(s) importé(s)';
+        if (result.perSheet.length) msg += ' — ' + result.perSheet.join(', ');
+        if (result.skipped.length) msg += ' | feuille(s) ignorée(s) (colonnes non reconnues) : ' + result.skipped.join(', ');
+        setImportStatus(msg, result.added > 0 ? 'ok' : 'err');
+      } catch (err) {
+        console.error(err);
+        setImportStatus('Erreur de lecture du fichier : ' + err.message, 'err');
+      }
+      e.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', function() {
+    if (!beneficiaires.length) return;
+    if (!window.confirm('Supprimer les ' + beneficiaires.length + ' bénéficiaires actuellement chargés ? Cette action est irréversible.')) return;
+    beneficiaires = [];
+    saveData();
+    renderAll();
+    setImportStatus('Liste vidée.', 'ok');
+  });
+
+  // ---------- logo & org name (memorises localement) ----------
+  function applyLogo(dataUrl) { root.style.setProperty('--logo-url', 'url("' + dataUrl + '")'); document.body.classList.add('has-logo'); }
+  function clearLogo() { document.body.classList.remove('has-logo'); root.style.removeProperty('--logo-url'); }
+  function applyOrgName(name) {
+    var value = (name || '').trim() || 'VOTRE ORGANISATION';
+    document.querySelectorAll('.org-name').forEach(function(el) { el.textContent = value; });
+  }
+
+  var savedOrg = storage.getItem(ORG_KEY);
+  if (savedOrg) document.getElementById('orgNameInput').value = savedOrg;
+  document.getElementById('orgNameInput').addEventListener('input', function(e) {
+    applyOrgName(e.target.value);
+    storage.setItem(ORG_KEY, e.target.value);
+  });
+
+  var savedLogo = storage.getItem(LOGO_KEY);
+  if (savedLogo) {
+    applyLogo(savedLogo);
+  } else {
+    var candidates = ['logo.png', 'logo.jpg', 'logo.jpeg', 'logo.svg'];
+    (function tryNext(i) {
+      if (i >= candidates.length) return;
+      var img = new Image();
+      img.onload = function() { applyLogo(candidates[i]); };
+      img.onerror = function() { tryNext(i + 1); };
+      img.src = candidates[i];
+    })(0);
+  }
+  document.getElementById('logoBtn').addEventListener('click', function() { document.getElementById('logoInput').click(); });
+  document.getElementById('logoInput').addEventListener('change', function(e) {
+    var file = e.target.files[0]; if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) { applyLogo(ev.target.result); storage.setItem(LOGO_KEY, ev.target.result); };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('removeLogoBtn').addEventListener('click', function() { clearLogo(); storage.removeItem(LOGO_KEY); });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

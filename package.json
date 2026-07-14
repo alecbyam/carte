@@ -1,0 +1,12 @@
+{
+  "name": "carte",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Generateur local de cartes CR80 (recto/verso, QR code, import Excel) pour distributions humanitaires.",
+  "scripts": {
+    "start": "serve -s . -l ${PORT:-3000}"
+  },
+  "dependencies": {
+    "serve": "^14.2.3"
+  }
+}
