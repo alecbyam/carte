@@ -5,9 +5,9 @@
 <title>__TITLE__</title>
 <style>
   :root {
-    --bg:#eff5f5; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
+    --bg:#ffffff; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
     --accent:#276469; --accent-dark:#1a464a; --accent-bg:#e1eef0;
-    --navy:#10195f; --navy-bg:#e6e7f5;
+    --navy:#1f6fb8; --navy-bg:#e8f2fb;
     --pink-bg:#fdeef2; --pink-text:#a1315a; --blue-bg:#eaf1fb; --blue-text:#275c9c;
     --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08);
     color-scheme: light dark;
@@ -15,18 +15,18 @@
   @media (prefers-color-scheme: dark) {
     :root { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
       --accent:#4fb3ba; --accent-dark:#7fd6dc; --accent-bg:#173538;
-      --navy:#8891e0; --navy-bg:#20224a;
+      --navy:#6fb4ea; --navy-bg:#18324a;
       --pink-bg:#3a2530; --pink-text:#e893b2;
       --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
   }
   :root[data-theme="dark"] { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
     --accent:#4fb3ba; --accent-dark:#7fd6dc; --accent-bg:#173538;
-    --navy:#8891e0; --navy-bg:#20224a;
+    --navy:#6fb4ea; --navy-bg:#18324a;
     --pink-bg:#3a2530; --pink-text:#e893b2;
     --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
-  :root[data-theme="light"] { --bg:#eff5f5; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
+  :root[data-theme="light"] { --bg:#ffffff; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
     --accent:#276469; --accent-dark:#1a464a; --accent-bg:#e1eef0;
-    --navy:#10195f; --navy-bg:#e6e7f5;
+    --navy:#1f6fb8; --navy-bg:#e8f2fb;
     --pink-bg:#fdeef2; --pink-text:#a1315a;
     --blue-bg:#eaf1fb; --blue-text:#275c9c; --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08); }
 
@@ -101,47 +101,47 @@
     width:85.6mm; height:53.98mm; border-radius:3.18mm; border:0.25mm solid var(--border);
     background:var(--card-bg); overflow:hidden; flex:0 0 auto; position:relative;
   }
-  .rc-card { border-top:1mm solid var(--accent); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.5mm; }
-  .rc-top { display:flex; align-items:flex-start; gap:2mm; }
-  .logo-box { width:21mm; height:8.5mm; border-radius:1.2mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+  .rc-card { border-top:1mm solid var(--accent); padding:2mm 2.4mm 2mm 2.4mm; display:flex; flex-direction:column; gap:0.9mm; }
+  .rc-top { display:flex; align-items:flex-start; gap:1.6mm; }
+  .logo-box { width:15mm; height:6mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
     background-size:contain; background-position:center; background-repeat:no-repeat; }
   body.has-logo .logo-box { border-style:solid; border-color:var(--border); background-image: var(--logo-url); }
   body.pdf-capture-no-logo .logo-box { background-image:none !important; border-style:dashed !important; }
-  .head-text { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:0.4mm; padding-top:0.3mm; }
-  .org-name { font-size:5pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
+  .head-text { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:0.3mm; padding-top:0.1mm; }
+  .org-name { font-size:4.6pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .card-title { font-size:4.4pt; font-weight:600; letter-spacing:0.03em; color:var(--navy); text-transform:uppercase;
+  .card-title { font-size:4pt; font-weight:600; letter-spacing:0.02em; color:var(--navy); text-transform:uppercase;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .num-badge { font-size:5pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.4mm 1.8mm; border-radius:2.5mm; flex:0 0 auto; }
-  .rc-meta { display:flex; justify-content:space-between; gap:2mm; font-size:4.3pt; color:var(--muted); border-bottom:0.2mm solid var(--border); padding-bottom:1mm; }
+  .num-badge { font-size:4.6pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.3mm 1.6mm; border-radius:2.5mm; flex:0 0 auto; }
+  .rc-meta { display:flex; justify-content:space-between; gap:2mm; font-size:3.8pt; color:var(--muted); border-bottom:0.2mm solid var(--border); padding-bottom:0.6mm; }
   .rc-meta b { color:var(--text); font-weight:700; }
-  .rc-mid { display:flex; gap:2mm; flex:1; align-items:center; min-height:0; }
-  .rc-id { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1mm; }
-  .rc-name { font-size:8pt; font-weight:700; line-height:1.15; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .rc-mid { display:flex; gap:1.8mm; align-items:center; min-height:0; }
+  .rc-id { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:0.6mm; }
+  .rc-name { font-size:6.6pt; font-weight:700; line-height:1.1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .pill-row { display:flex; gap:1mm; flex-wrap:wrap; }
-  .sexe-pill, .statut-pill { font-size:4.6pt; font-weight:700; padding:0.3mm 1.6mm; border-radius:2.5mm; text-transform:uppercase; display:inline-block; width:fit-content; }
+  .sexe-pill, .statut-pill { font-size:4pt; font-weight:700; padding:0.25mm 1.4mm; border-radius:2.5mm; text-transform:uppercase; display:inline-block; width:fit-content; }
   .sexe-f { background:var(--pink-bg); color:var(--pink-text); }
   .sexe-m { background:var(--blue-bg); color:var(--blue-text); }
   .statut-pill { background:var(--navy-bg); color:var(--navy); }
-  .loc-row { font-size:5.4pt; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .qr-wrap { width:17mm; height:17mm; flex:0 0 auto; }
+  .loc-row { font-size:4.4pt; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .loc-row2 { font-size:3.9pt; opacity:0.85; }
+  .qr-wrap { width:13.5mm; height:13.5mm; flex:0 0 auto; }
   .qr-wrap svg { width:100%; height:100%; display:block; }
 
-  .vc-card { border-top:1mm solid var(--navy); padding:2.6mm 3mm 3mm 3mm; display:flex; flex-direction:column; gap:1.4mm; }
-  .vc-top { display:flex; justify-content:space-between; align-items:baseline; gap:2mm; font-size:5pt; color:var(--muted);
-    border-bottom:0.2mm solid var(--border); padding-bottom:1mm; }
-  .vc-num { font-weight:700; color:var(--accent-dark); flex:0 0 auto; }
-  .vc-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:right; }
-  .chip-grid { display:grid; grid-template-columns:1fr 1fr; gap:1mm 2mm; flex:1; align-content:center; }
-  .chip { display:flex; justify-content:space-between; align-items:center; background:var(--bg); border:0.2mm solid var(--border);
-    border-radius:1.3mm; padding:0.7mm 1.6mm; }
-  .chip-label { font-size:5pt; }
-  .chip-qty { font-size:5.2pt; font-weight:700; color:var(--accent-dark); }
-  .vc-bottom { display:flex; flex-direction:column; gap:1mm; }
-  .sign-row { display:flex; gap:3mm; }
+  .rc-items { display:flex; flex-direction:column; gap:0.5mm; }
+  .rc-section-label { font-size:3.6pt; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); }
+  .chip-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:0.6mm 1mm; }
+  .chip { display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg); border:0.2mm solid var(--border);
+    border-radius:1mm; padding:0.6mm 0.4mm; text-align:center; line-height:1.15; }
+  .chip-label { font-size:3.5pt; color:var(--muted); }
+  .chip-qty { font-size:4.4pt; font-weight:700; color:var(--accent-dark); }
+
+  .rc-signatures { display:flex; gap:3mm; margin-top:0.2mm; }
   .sign-box { flex:1; }
-  .sign-label { font-size:4pt; color:var(--muted); margin-bottom:2.8mm; }
-  .sign-line { border-bottom:0.2mm solid var(--border); height:0.3mm; }
+  .sign-label { font-size:3.4pt; color:var(--muted); margin-bottom:1.6mm; }
+  .sign-line { border-bottom:0.2mm solid var(--border); height:0.2mm; }
+
+  .vc-card { border-top:1mm solid var(--navy); }
   .date-row { font-size:4.3pt; color:var(--muted); }
 
   .new-flash { animation: flash 1.6s ease-out; }
@@ -157,8 +157,6 @@
     .card-pair { box-shadow:none; border:none; border-radius:0; padding:0; gap:0; }
     .rc-card, .vc-card { box-shadow:none; border-radius:0; page-break-after:always; break-after:page; width:85.6mm; height:53.98mm; }
     .card-pair:last-child .vc-card { page-break-after:auto; break-after:auto; }
-    body.print-one .card-pair { display:none !important; }
-    body.print-one .card-pair.print-target { display:flex !important; }
   }
 </style>
 </head>
@@ -222,6 +220,9 @@
     <div class="field grow"><label for="fChefferie">Chefferie</label><input type="text" id="fChefferie" value=""></div>
     <div class="field grow"><label for="fSite">Site de distribution</label><input type="text" id="fSite" value=""></div>
     <div class="field grow"><label for="fStatut">Statut</label><input type="text" id="fStatut" placeholder="ex: Chef de m&eacute;nage, PDI..."></div>
+    <div class="field grow"><label for="fZoneSante">Zone de sant&eacute;</label><input type="text" id="fZoneSante" value=""></div>
+    <div class="field grow"><label for="fAireSante">Aire de sant&eacute;</label><input type="text" id="fAireSante" value=""></div>
+    <div class="field grow"><label for="fCollectivite">Collectivit&eacute;</label><input type="text" id="fCollectivite" value=""></div>
     <div class="qty-grid" id="qtyGrid"></div>
     <div class="submit-row"><button type="submit">G&eacute;n&eacute;rer la carte</button></div>
   </form>
@@ -253,7 +254,7 @@
   var ORG_KEY = "carte_org_name";
   var CODE_PROJET_KEY = "carte_code_projet";
   var KIT_TYPE_KEY = "carte_kit_type";
-  var DEFAULT_CODE_PROJET = "200816";
+  var DEFAULT_CODE_PROJET = "";
   var DEFAULT_KIT_TYPE = "NFI WASH";
   var SEED = __SEED_JSON__;
   var ITEMS_SHORT = __ITEMS_JSON__;
@@ -308,19 +309,21 @@
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function locLine(b) {
-    var parts = [b.village, b.chefferie, b.site].map(function(s) { return (s || '').trim(); }).filter(Boolean);
+  function dedupJoin(list) {
+    var parts = list.map(function(s) { return (s || '').trim(); }).filter(Boolean);
     var seen = {}; var out = [];
     parts.forEach(function(p) { var k = p.toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(p); } });
     return out.join(' · ');
   }
+  function locLine(b) { return dedupJoin([b.village, b.chefferie, b.site]); }
+  function healthLine(b) { return dedupJoin([b.zoneSante, b.aireSante, b.collectivite]); }
 
   function buildPair(b) {
     var sexeClass = /^f/i.test(b.sexe) ? 'sexe-f' : 'sexe-m';
     var qrData = 'N' + b.num + ' - ' + b.nom + ' - ' + locLine(b);
     var statutPill = b.statut ? '<span class="statut-pill">' + esc(b.statut) + '</span>' : '';
     var orgNameVal = (document.getElementById('orgNameInput').value || '').trim() || 'VOTRE ORGANISATION';
-    var codeProjetVal = (document.getElementById('codeProjetInput').value || '').trim() || DEFAULT_CODE_PROJET;
+    var codeProjetVal = (document.getElementById('codeProjetInput').value || '').trim() || '________';
     var kitTypeVal = (document.getElementById('kitTypeInput').value || '').trim() || DEFAULT_KIT_TYPE;
 
     var wrap = document.createElement('div');
@@ -347,35 +350,31 @@
           '<div class="rc-name">' + esc(b.nom) + '</div>' +
           '<div class="pill-row"><span class="sexe-pill ' + sexeClass + '">' + esc(b.sexe) + '</span>' + statutPill + '</div>' +
           '<div class="loc-row">' + esc(locLine(b)) + '</div>' +
+          (healthLine(b) ? '<div class="loc-row loc-row2">' + esc(healthLine(b)) + '</div>' : '') +
         '</div>' +
         '<div class="qr-wrap">' + qrSvg(qrData) + '</div>' +
+      '</div>' +
+      '<div class="rc-items">' +
+        '<div class="chip-grid">' + ITEMS_SHORT.map(function(label, i) {
+          var qty = (b.qtys && b.qtys[i] !== undefined && b.qtys[i] !== '') ? b.qtys[i] : '-';
+          return '<div class="chip"><span class="chip-label">' + esc(label) + '</span><span class="chip-qty">&times;' + esc(qty) + '</span></div>';
+        }).join('') + '</div>' +
+      '</div>' +
+      '<div class="rc-signatures">' +
+        '<div class="sign-box"><div class="sign-label">Signature b&eacute;n&eacute;ficiaire</div><div class="sign-line"></div></div>' +
+        '<div class="sign-box"><div class="sign-label">Agent distributeur</div><div class="sign-line"></div></div>' +
       '</div>';
-
-    var chips = ITEMS_SHORT.map(function(label, i) {
-      var qty = (b.qtys && b.qtys[i] !== undefined && b.qtys[i] !== '') ? b.qtys[i] : '-';
-      return '<div class="chip"><span class="chip-label">' + esc(label) + '</span><span class="chip-qty">&times;' + esc(qty) + '</span></div>';
-    }).join('');
 
     var vc = document.createElement('div');
     vc.className = 'vc-card';
-    vc.innerHTML =
-      '<div class="vc-top"><span class="vc-num">N&deg;' + esc(b.num) + '</span><span class="vc-name">' + esc(b.nom) + '</span></div>' +
-      '<div class="chip-grid">' + chips + '</div>' +
-      '<div class="vc-bottom">' +
-        '<div class="sign-row">' +
-          '<div class="sign-box"><div class="sign-label">Signature b&eacute;n&eacute;ficiaire</div><div class="sign-line"></div></div>' +
-          '<div class="sign-box"><div class="sign-label">Agent distributeur</div><div class="sign-line"></div></div>' +
-        '</div>' +
-        '<div class="date-row">Date&nbsp;: ____ / ____ / ________</div>' +
-      '</div>';
 
     var actions = document.createElement('div');
     actions.className = 'pair-actions';
     var pdfBtn = document.createElement('button');
     pdfBtn.type = 'button';
     pdfBtn.textContent = 'PDF';
-    pdfBtn.title = 'Imprimer / enregistrer cette carte en PDF (format CR80)';
-    pdfBtn.addEventListener('click', function() { printOne(wrap); });
+    pdfBtn.title = 'Télécharger cette carte en PDF (format CR80)';
+    pdfBtn.addEventListener('click', function() { generateCardsPdf([rc, vc], 'carte_' + b.num + '.pdf', pdfBtn); });
     actions.appendChild(pdfBtn);
 
     wrap.appendChild(rc);
@@ -395,27 +394,47 @@
     applyOrgName(document.getElementById('orgNameInput').value);
   }
 
-  function printOne(pairEl) {
-    document.body.classList.add('print-one');
-    pairEl.classList.add('print-target');
-    window.print();
-  }
-  window.addEventListener('afterprint', function() {
-    document.body.classList.remove('print-one');
-    document.querySelectorAll('.print-target').forEach(function(el) { el.classList.remove('print-target'); });
-  });
   document.getElementById('printAllBtn').addEventListener('click', function() { window.print(); });
 
-  // ---------- telechargement direct du PDF complet (toutes les cartes, recto+verso) ----------
+  // ---------- telechargement direct du/des PDF (recto+verso), via un cadre de capture isole ----------
+  // Capturer une carte depuis la page complete (des centaines de cartes deja affichees) est tres lent :
+  // html2canvas doit recopier tout le document a chaque appel. En clonant chaque carte dans un <iframe>
+  // minimal (juste les styles + cette carte), chaque capture passe de ~3s a ~30ms.
   function setPdfStatus(text, cls) {
     var el = document.getElementById('pdfStatus');
     el.textContent = text;
     el.className = 'pdf-status' + (cls ? ' ' + cls : '');
   }
 
-  document.getElementById('downloadPdfBtn').addEventListener('click', function () {
-    var btn = this;
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.rc-card, .vc-card'));
+  function openCaptureFrame() {
+    var styleText = Array.prototype.map.call(document.querySelectorAll('style'), function(s) { return s.textContent; }).join('\n');
+    var rootStyle = document.documentElement.getAttribute('style') || '';
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = 'position:fixed; left:-9999px; top:0; width:400px; height:300px; border:0;';
+    document.body.appendChild(iframe);
+    var idoc = iframe.contentDocument;
+    idoc.open();
+    idoc.write('<!doctype html><html style="' + rootStyle.replace(/"/g, '&quot;') + '"><head><meta charset="utf-8"><style>' + styleText + '</style></head><body></body></html>');
+    idoc.close();
+    return iframe;
+  }
+
+  function closeCaptureFrame(iframe) {
+    if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
+  }
+
+  function captureCard(iframe, cardEl, logoHiddenForCapture) {
+    var idoc = iframe.contentDocument;
+    idoc.body.className = logoHiddenForCapture ? 'pdf-capture-no-logo' : '';
+    idoc.body.innerHTML = '';
+    idoc.body.appendChild(cardEl.cloneNode(true));
+    return new Promise(function(resolve) { setTimeout(resolve, 20); }).then(function() {
+      return html2canvas(idoc.body.firstChild, { scale: 4, backgroundColor: null });
+    });
+  }
+
+  function generateCardsPdf(cards, filename, btn) {
     if (!cards.length) { setPdfStatus('Aucune carte à exporter.', 'err'); return; }
     if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
       setPdfStatus('Erreur : librairie PDF indisponible.', 'err');
@@ -423,42 +442,46 @@
     }
 
     var logoHiddenForCapture = document.body.classList.contains('has-logo') && !logoCanvasSafe;
-    if (logoHiddenForCapture) document.body.classList.add('pdf-capture-no-logo');
-
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
     setPdfStatus('Préparation du PDF… 0/' + cards.length);
 
     var CARD_W = 85.6, CARD_H = 53.98;
     var pdf = new jspdf.jsPDF({ unit: 'mm', format: [CARD_W, CARD_H] });
+    var iframe = openCaptureFrame();
 
     function finish(message, cls) {
-      document.body.classList.remove('pdf-capture-no-logo');
+      closeCaptureFrame(iframe);
       setPdfStatus(message, cls);
-      btn.disabled = false;
+      if (btn) btn.disabled = false;
     }
 
     var i = 0;
     function renderNext() {
       if (i >= cards.length) {
-        pdf.save('cartes_beneficiaires.pdf');
+        pdf.save(filename);
         var msg = cards.length + ' page(s) (recto+verso) générées — téléchargement lancé.';
         if (logoHiddenForCapture) msg += ' Logo non inclus (fichier local hors-ligne) : importez-le via le bouton "Logo" pour qu\'il apparaisse aussi dans ce PDF.';
         finish(msg, 'ok');
         return;
       }
-      html2canvas(cards[i], { scale: 4, backgroundColor: null }).then(function (canvas) {
+      captureCard(iframe, cards[i], logoHiddenForCapture).then(function (canvas) {
         if (i > 0) pdf.addPage([CARD_W, CARD_H]);
         var imgData = canvas.toDataURL('image/jpeg', 0.95);
         pdf.addImage(imgData, 'JPEG', 0, 0, CARD_W, CARD_H);
         i++;
         setPdfStatus('Génération du PDF… ' + i + '/' + cards.length);
-        setTimeout(renderNext, 0);
+        renderNext();
       }).catch(function (err) {
         console.error(err);
         finish('Erreur pendant la génération (carte ' + (i + 1) + ') : ' + err.message, 'err');
       });
     }
     renderNext();
+  }
+
+  document.getElementById('downloadPdfBtn').addEventListener('click', function () {
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.rc-card, .vc-card'));
+    generateCardsPdf(cards, 'cartes_beneficiaires.pdf', this);
   });
 
   // ---------- add-beneficiary form ----------
@@ -479,9 +502,13 @@
     var chefferie = document.getElementById('fChefferie').value.trim();
     var site = document.getElementById('fSite').value.trim();
     var statut = document.getElementById('fStatut').value.trim();
+    var zoneSante = document.getElementById('fZoneSante').value.trim();
+    var aireSante = document.getElementById('fAireSante').value.trim();
+    var collectivite = document.getElementById('fCollectivite').value.trim();
     var qtys = Array.prototype.map.call(qtyGrid.querySelectorAll('input'), function(inp) { return inp.value.trim(); });
 
-    var b = { num: nextNum(), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut, qtys: qtys };
+    var b = { num: nextNum(), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut,
+      zoneSante: zoneSante, aireSante: aireSante, collectivite: collectivite, qtys: qtys };
     beneficiaires.push(b);
     saveData();
 
@@ -509,6 +536,9 @@
     { field: 'village', test: function(h) { return h.indexOf('village') !== -1; } },
     { field: 'chefferie', test: function(h) { return h.indexOf('chefferie') !== -1; } },
     { field: 'site', test: function(h) { return h.indexOf('site') !== -1; } },
+    { field: 'zoneSante', test: function(h) { return h.indexOf('zone') !== -1 && h.indexOf('sante') !== -1; } },
+    { field: 'aireSante', test: function(h) { return h.indexOf('aire') !== -1 && h.indexOf('sante') !== -1; } },
+    { field: 'collectivite', test: function(h) { return h.indexOf('collectivite') !== -1; } },
     { field: 'statut', test: function(h) { return h.indexOf('statut') !== -1; } },
     { field: 'signature', test: function(h) { return h.indexOf('signature') !== -1; } },
     { field: 'item0', test: function(h) { return h.indexOf('bidon') !== -1; } },
@@ -580,6 +610,9 @@
           chefferie: cols.chefferie !== undefined ? String(row[cols.chefferie] || '').trim() : '',
           site: cols.site !== undefined ? String(row[cols.site] || '').trim() : '',
           statut: cols.statut !== undefined ? String(row[cols.statut] || '').trim() : '',
+          zoneSante: cols.zoneSante !== undefined ? String(row[cols.zoneSante] || '').trim() : '',
+          aireSante: cols.aireSante !== undefined ? String(row[cols.aireSante] || '').trim() : '',
+          collectivite: cols.collectivite !== undefined ? String(row[cols.collectivite] || '').trim() : '',
           qtys: qtys
         };
         beneficiaires.push(b);
@@ -747,7 +780,7 @@
     document.querySelectorAll('.org-name').forEach(function(el) { el.textContent = value; });
   }
   function applyCodeProjet(value) {
-    var v = (value || '').trim() || DEFAULT_CODE_PROJET;
+    var v = (value || '').trim() || '________';
     document.querySelectorAll('.code-projet').forEach(function(el) { el.textContent = v; });
   }
   function applyKitType(value) {
