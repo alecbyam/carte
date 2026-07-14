@@ -157,9 +157,9 @@
 <details class="import-wrap" id="importWrap">
   <summary>&#8593; Importer un fichier Excel (g&eacute;n&egrave;re les cartes de toutes les feuilles automatiquement)</summary>
   <div class="import-body">
-    <p>Formats accept&eacute;s : .xlsx, .xls, .csv. Toutes les feuilles du classeur sont lues ; les colonnes sont reconnues automatiquement (Nom, Sexe, Village, Chefferie, Site, articles) m&ecirc;me si leurs intitul&eacute;s varient l&eacute;g&egrave;rement d'une feuille &agrave; l'autre. Traitement 100% local dans votre navigateur : le fichier n'est jamais envoy&eacute; &agrave; un serveur.</p>
-    <button id="importBtn" type="button">Choisir un fichier Excel</button>
-    <input type="file" id="importInput" accept=".xlsx,.xls,.csv" style="display:none">
+    <p>Formats accept&eacute;s : .xlsx, .xls, .csv. Vous pouvez s&eacute;lectionner <strong>plusieurs fichiers &agrave; la fois</strong> (ex&nbsp;: un fichier par site de distribution) : toutes leurs feuilles sont lues, et les colonnes sont reconnues automatiquement (Nom, Sexe, Village, Chefferie, Site, articles) m&ecirc;me si leurs intitul&eacute;s varient d'un fichier &agrave; l'autre. Traitement 100% local dans votre navigateur : aucun fichier n'est jamais envoy&eacute; &agrave; un serveur.</p>
+    <button id="importBtn" type="button">Choisir un ou plusieurs fichiers Excel</button>
+    <input type="file" id="importInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
     <button id="clearAllBtn" type="button" class="danger">Vider la liste</button>
     <div class="import-status" id="importStatus"></div>
   </div>
@@ -451,40 +451,59 @@
     el.className = 'import-status' + (cls ? ' ' + cls : '');
   }
 
+  function readFileAsArrayBuffer(file) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function(ev) { resolve(ev.target.result); };
+      reader.onerror = function() { reject(reader.error || new Error('lecture impossible')); };
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
   document.getElementById('importBtn').addEventListener('click', function() { document.getElementById('importInput').click(); });
   document.getElementById('importInput').addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    setImportStatus('Lecture de ' + file.name + '...');
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      try {
-        var data = new Uint8Array(ev.target.result);
-        var workbook = XLSX.read(data, { type: 'array' });
-        var result = importWorkbook(workbook);
-        if (result.added > 0) {
-          saveData();
-          if (cardList.querySelector('.empty-hint')) cardList.innerHTML = '';
-          var frag = document.createDocumentFragment();
-          beneficiaires.slice(beneficiaires.length - result.added).forEach(function(b) {
-            var pair = buildPair(b);
-            pair.classList.add('new-flash');
-            frag.appendChild(pair);
-          });
-          cardList.appendChild(frag);
-          document.getElementById('countLabel').textContent = beneficiaires.length + ' bénéficiaires';
-        }
-        var msg = result.added + ' bénéficiaire(s) importé(s)';
-        if (result.perSheet.length) msg += ' — ' + result.perSheet.join(', ');
-        if (result.skipped.length) msg += ' | feuille(s) ignorée(s) (colonnes non reconnues) : ' + result.skipped.join(', ');
-        setImportStatus(msg, result.added > 0 ? 'ok' : 'err');
-      } catch (err) {
-        console.error(err);
-        setImportStatus('Erreur de lecture du fichier : ' + err.message, 'err');
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+
+    setImportStatus('Lecture de ' + files.length + ' fichier(s)...');
+
+    var totalAdded = 0;
+    var fileSummaries = [];
+    var allSkipped = [];
+
+    files.reduce(function(chain, file) {
+      return chain.then(function() {
+        return readFileAsArrayBuffer(file).then(function(buf) {
+          try {
+            var workbook = XLSX.read(new Uint8Array(buf), { type: 'array' });
+            var result = importWorkbook(workbook);
+            totalAdded += result.added;
+            fileSummaries.push(file.name + ' : ' + result.added + (result.perSheet.length ? ' (' + result.perSheet.join(', ') + ')' : ''));
+            if (result.skipped.length) allSkipped.push(file.name + ' → ' + result.skipped.join(', '));
+          } catch (err) {
+            console.error(err);
+            fileSummaries.push(file.name + ' : erreur (' + err.message + ')');
+          }
+        });
+      });
+    }, Promise.resolve()).then(function() {
+      if (totalAdded > 0) {
+        saveData();
+        if (cardList.querySelector('.empty-hint')) cardList.innerHTML = '';
+        var frag = document.createDocumentFragment();
+        beneficiaires.slice(beneficiaires.length - totalAdded).forEach(function(b) {
+          var pair = buildPair(b);
+          pair.classList.add('new-flash');
+          frag.appendChild(pair);
+        });
+        cardList.appendChild(frag);
+        document.getElementById('countLabel').textContent = beneficiaires.length + ' bénéficiaires';
       }
+      var msg = totalAdded + ' bénéficiaire(s) importé(s) au total — ' + fileSummaries.join(' | ');
+      if (allSkipped.length) msg += ' — feuille(s) ignorée(s) : ' + allSkipped.join(' ; ');
+      setImportStatus(msg, totalAdded > 0 ? 'ok' : 'err');
       e.target.value = '';
-    };
-    reader.readAsArrayBuffer(file);
+    });
   });
 
   document.getElementById('clearAllBtn').addEventListener('click', function() {
