@@ -103,7 +103,7 @@
   }
   .rc-card { border-top:1mm solid var(--accent); padding:2mm 2.4mm 2mm 2.4mm; display:flex; flex-direction:column; gap:0.9mm; }
   .rc-top { display:flex; align-items:flex-start; gap:1.6mm; }
-  .logo-box { width:15mm; height:6mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+  .logo-box { width:19mm; height:7.5mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
     background-size:contain; background-position:center; background-repeat:no-repeat; }
   body.has-logo .logo-box { border-style:solid; border-color:var(--border); background-image: var(--logo-url); }
   body.pdf-capture-no-logo .logo-box { background-image:none !important; border-style:dashed !important; }
@@ -125,7 +125,7 @@
   .statut-pill { background:var(--navy-bg); color:var(--navy); }
   .loc-row { font-size:4.4pt; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .loc-row2 { font-size:3.9pt; opacity:0.85; }
-  .qr-wrap { width:13.5mm; height:13.5mm; flex:0 0 auto; }
+  .qr-wrap { width:16mm; height:16mm; flex:0 0 auto; }
   .qr-wrap svg { width:100%; height:100%; display:block; }
 
   .rc-items { display:flex; flex-direction:column; gap:0.5mm; }
@@ -292,12 +292,12 @@
 
   function codeVillagePart(village) {
     var s = norm(village).toUpperCase().replace(/[^A-Z0-9]/g, '');
-    return s || 'SITE';
+    return (s || 'SIT').slice(0, 3);
   }
 
-  // Numero auto-genere = concatenation TF + village + numero sequentiel (propre a ce village), ex: TF-JALUSENE-001
+  // Numero auto-genere = TF + 3 premieres lettres du village + numero sequentiel (propre a ce village), ex: TFJAL-01
   function nextNum(village) {
-    var prefix = 'TF-' + codeVillagePart(village) + '-';
+    var prefix = 'TF' + codeVillagePart(village) + '-';
     var max = 0;
     beneficiaires.forEach(function(b) {
       if (typeof b.num === 'string' && b.num.indexOf(prefix) === 0) {
@@ -305,7 +305,7 @@
         if (!isNaN(n) && n > max) max = n;
       }
     });
-    return prefix + String(max + 1).padStart(3, '0');
+    return prefix + String(max + 1).padStart(2, '0');
   }
 
   // ---------- QR ----------
@@ -330,13 +330,27 @@
   function locLine(b) { return dedupJoin([b.village, b.chefferie, b.site]); }
   function healthLine(b) { return dedupJoin([b.zoneSante, b.aireSante, b.collectivite]); }
 
+  function buildQrPayload(b, kitTypeVal, codeProjetVal) {
+    var parts = [
+      'N:' + b.num,
+      'Nom:' + b.nom,
+      b.sexe ? 'Sexe:' + b.sexe : '',
+      b.statut ? 'Statut:' + b.statut : '',
+      locLine(b) ? 'Loc:' + locLine(b) : '',
+      healthLine(b) ? 'ZS/AS/Coll:' + healthLine(b) : '',
+      'Kit:' + kitTypeVal,
+      (codeProjetVal && codeProjetVal !== '________') ? 'CodeProjet:' + codeProjetVal : ''
+    ];
+    return parts.filter(Boolean).join(' | ');
+  }
+
   function buildPair(b) {
     var sexeClass = /^f/i.test(b.sexe) ? 'sexe-f' : 'sexe-m';
-    var qrData = 'N' + b.num + ' - ' + b.nom + ' - ' + locLine(b);
     var statutPill = b.statut ? '<span class="statut-pill">' + esc(b.statut) + '</span>' : '';
     var orgNameVal = (document.getElementById('orgNameInput').value || '').trim() || 'VOTRE ORGANISATION';
     var codeProjetVal = (document.getElementById('codeProjetInput').value || '').trim() || '________';
     var kitTypeVal = (document.getElementById('kitTypeInput').value || '').trim() || DEFAULT_KIT_TYPE;
+    var qrData = buildQrPayload(b, kitTypeVal, codeProjetVal);
 
     var wrap = document.createElement('div');
     wrap.className = 'card-pair';
@@ -458,7 +472,7 @@
     setPdfStatus('Préparation du PDF… 0/' + cards.length);
 
     var CARD_W = 85.6, CARD_H = 53.98;
-    var pdf = new jspdf.jsPDF({ unit: 'mm', format: [CARD_W, CARD_H] });
+    var pdf = new jspdf.jsPDF({ unit: 'mm', format: [CARD_W, CARD_H], orientation: 'landscape' });
     var iframe = openCaptureFrame();
 
     function finish(message, cls) {
@@ -477,7 +491,7 @@
         return;
       }
       captureCard(iframe, cards[i], logoHiddenForCapture).then(function (canvas) {
-        if (i > 0) pdf.addPage([CARD_W, CARD_H]);
+        if (i > 0) pdf.addPage([CARD_W, CARD_H], 'landscape');
         var imgData = canvas.toDataURL('image/jpeg', 0.95);
         pdf.addImage(imgData, 'JPEG', 0, 0, CARD_W, CARD_H);
         i++;
