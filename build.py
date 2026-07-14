@@ -9,6 +9,7 @@ Usage:
   python build.py --source data.tsv --out sortie.html
 """
 import argparse
+import base64
 import csv
 import json
 import os
@@ -71,6 +72,13 @@ def main():
     html2canvas_lib = open(os.path.join(VENDOR, "html2canvas.min.js"), encoding="utf-8").read()
     jspdf_lib = open(os.path.join(VENDOR, "jspdf.umd.min.js"), encoding="utf-8").read()
 
+    # Logo incorpore en data: URI directement dans le HTML : il s'affiche et s'exporte en PDF
+    # partout, y compris quand le fichier est ouvert en local (file://), sans "tainted canvas".
+    logo_data = ""
+    logo_path = os.path.join(HERE, "logo.png")
+    if os.path.exists(logo_path):
+        logo_data = "data:image/png;base64," + base64.b64encode(open(logo_path, "rb").read()).decode()
+
     template_path = os.path.join(HERE, "template.html")
     template = open(template_path, encoding="utf-8").read()
 
@@ -84,6 +92,7 @@ def main():
         .replace("__XLSX_LIB__", xlsx_lib)
         .replace("__HTML2CANVAS_LIB__", html2canvas_lib)
         .replace("__JSPDF_LIB__", jspdf_lib)
+        .replace("__LOGO_DATA__", logo_data)
     )
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)

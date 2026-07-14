@@ -98,16 +98,16 @@
   }
   .rc-card { border-top:1mm solid var(--accent); padding:2mm 2.4mm 2mm 2.4mm; display:flex; flex-direction:column; gap:0.9mm; }
   .rc-top { display:flex; align-items:flex-start; gap:1.6mm; }
-  .logo-box { width:19mm; height:7.5mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+  .logo-box { width:25mm; height:9.5mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
     background-size:contain; background-position:center; background-repeat:no-repeat; }
-  body.has-logo .logo-box { border-style:solid; border-color:var(--border); background-image: var(--logo-url); }
+  body.has-logo .logo-box { border-color:transparent; background-color:transparent; background-image: var(--logo-url); }
   body.pdf-capture-no-logo .logo-box { background-image:none !important; border-style:dashed !important; }
   .head-text { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:0.3mm; padding-top:0.1mm; }
-  .org-name { font-size:4.6pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
+  .org-name { font-size:5.2pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .card-title { font-size:4pt; font-weight:600; letter-spacing:0.02em; color:var(--navy); text-transform:uppercase;
+  .card-title { font-size:4.4pt; font-weight:600; letter-spacing:0.02em; color:var(--navy); text-transform:uppercase;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .num-badge { font-size:4.6pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.3mm 1.6mm; border-radius:2.5mm; flex:0 0 auto; }
+  .num-badge { font-size:5pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.4mm 1.8mm; border-radius:2.5mm; flex:0 0 auto; }
   .rc-meta { display:flex; justify-content:space-between; gap:2mm; font-size:3.8pt; color:var(--muted); border-bottom:0.2mm solid var(--border); padding-bottom:0.6mm; }
   .rc-meta b { color:var(--text); font-weight:700; }
   .rc-mid { display:flex; gap:1.8mm; align-items:center; min-height:0; }
@@ -447,7 +447,8 @@
 
   function captureCard(iframe, cardEl, logoHiddenForCapture, scale) {
     var idoc = iframe.contentDocument;
-    idoc.body.className = logoHiddenForCapture ? 'pdf-capture-no-logo' : '';
+    // Reprendre les classes du body principal (dont has-logo, sinon le logo disparait du PDF)
+    idoc.body.className = document.body.className + (logoHiddenForCapture ? ' pdf-capture-no-logo' : '');
     idoc.body.innerHTML = '';
     idoc.body.appendChild(cardEl.cloneNode(true));
     return new Promise(function(resolve) { setTimeout(resolve, 20); }).then(function() {
@@ -584,7 +585,7 @@
     var collectivite = document.getElementById('fCollectivite').value.trim();
     var qtys = Array.prototype.map.call(qtyGrid.querySelectorAll('input'), function(inp) { return inp.value.trim(); });
 
-    var b = { num: nextNum(village), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut,
+    var b = { num: nextNum(village || chefferie || site), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut,
       zoneSante: zoneSante, aireSante: aireSante, collectivite: collectivite, qtys: qtys };
     beneficiaires.push(b);
     saveData();
@@ -678,15 +679,18 @@
           qtys.push(ci !== undefined ? String(row[ci] || '').trim() : '');
         }
 
-        var code = cols.code !== undefined ? String(row[cols.code] || '').trim() : '';
+        // Numerotation TF{VIL}-NNN partout, y compris a l'import : le code present dans le
+        // fichier Excel n'est plus repris tel quel comme numero de carte.
         var rowVillage = cols.village !== undefined ? String(row[cols.village] || '').trim() : '';
+        var rowChefferie = cols.chefferie !== undefined ? String(row[cols.chefferie] || '').trim() : '';
+        var rowSite = cols.site !== undefined ? String(row[cols.site] || '').trim() : '';
         var b = {
-          num: code || nextNum(rowVillage),
+          num: nextNum(rowVillage || rowChefferie || rowSite),
           nom: nom,
           sexe: cols.sexe !== undefined ? String(row[cols.sexe] || '').trim() : '',
           village: rowVillage,
-          chefferie: cols.chefferie !== undefined ? String(row[cols.chefferie] || '').trim() : '',
-          site: cols.site !== undefined ? String(row[cols.site] || '').trim() : '',
+          chefferie: rowChefferie,
+          site: rowSite,
           statut: cols.statut !== undefined ? String(row[cols.statut] || '').trim() : '',
           zoneSante: cols.zoneSante !== undefined ? String(row[cols.zoneSante] || '').trim() : '',
           aireSante: cols.aireSante !== undefined ? String(row[cols.aireSante] || '').trim() : '',
@@ -898,9 +902,13 @@
     });
   }
 
+  // Logo incorpore au build (data: URI) : toujours canvas-safe, donc toujours present dans le PDF.
+  var EMBEDDED_LOGO = "__LOGO_DATA__";
   var savedLogo = storage.getItem(LOGO_KEY);
   if (savedLogo) {
     applyLogo(savedLogo, true);
+  } else if (EMBEDDED_LOGO && EMBEDDED_LOGO.indexOf('data:') === 0) {
+    applyLogo(EMBEDDED_LOGO, true);
   } else {
     var candidates = ['logo.png', 'logo.jpg', 'logo.jpeg', 'logo.svg'];
     (function tryNext(i) {
