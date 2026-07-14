@@ -40,7 +40,7 @@ def parse_tsv(path):
             qtys = [r[i].strip() if i < len(r) else "" for i in range(5, 13)]
             rows.append({
                 "num": num, "nom": nom, "sexe": sexe,
-                "village": village, "chefferie": chefferie, "site": "",
+                "village": village, "chefferie": chefferie, "site": "", "statut": "",
                 "qtys": qtys,
             })
     return rows

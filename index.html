@@ -52,6 +52,8 @@
   .pdf-status.ok { color:var(--accent-dark); }
   .pdf-status.err { color:var(--pink-text); }
   .toolbar input[type="text"] { flex:1 1 160px; padding:7px 10px; border-radius:7px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.82rem; }
+  .tb-label { font-size:0.74rem; color:var(--muted); white-space:nowrap; }
+  .toolbar #codeProjetInput, .toolbar #kitTypeInput { flex:0 1 140px; }
   .toolbar button { background:var(--accent); color:#fff; border:none; padding:7px 13px; border-radius:7px; font-size:0.8rem; cursor:pointer; white-space:nowrap; transition:background .15s; }
   .toolbar button:hover { background: var(--accent-dark); }
   .toolbar button.secondary { background:transparent; color:var(--muted); border:1px solid var(--border); }
@@ -111,12 +113,16 @@
   .card-title { font-size:4.4pt; font-weight:600; letter-spacing:0.03em; color:var(--navy); text-transform:uppercase;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .num-badge { font-size:5pt; font-weight:700; background:var(--accent-bg); color:var(--accent-dark); padding:0.4mm 1.8mm; border-radius:2.5mm; flex:0 0 auto; }
+  .rc-meta { display:flex; justify-content:space-between; gap:2mm; font-size:4.3pt; color:var(--muted); border-bottom:0.2mm solid var(--border); padding-bottom:1mm; }
+  .rc-meta b { color:var(--text); font-weight:700; }
   .rc-mid { display:flex; gap:2mm; flex:1; align-items:center; min-height:0; }
   .rc-id { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1mm; }
   .rc-name { font-size:8pt; font-weight:700; line-height:1.15; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .sexe-pill { font-size:4.6pt; font-weight:700; padding:0.3mm 1.6mm; border-radius:2.5mm; text-transform:uppercase; display:inline-block; width:fit-content; }
+  .pill-row { display:flex; gap:1mm; flex-wrap:wrap; }
+  .sexe-pill, .statut-pill { font-size:4.6pt; font-weight:700; padding:0.3mm 1.6mm; border-radius:2.5mm; text-transform:uppercase; display:inline-block; width:fit-content; }
   .sexe-f { background:var(--pink-bg); color:var(--pink-text); }
   .sexe-m { background:var(--blue-bg); color:var(--blue-text); }
+  .statut-pill { background:var(--navy-bg); color:var(--navy); }
   .loc-row { font-size:5.4pt; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .qr-wrap { width:17mm; height:17mm; flex:0 0 auto; }
   .qr-wrap svg { width:100%; height:100%; display:block; }
@@ -181,6 +187,14 @@
       <span class="info" title="Format CR80 (85,60 x 53,98 mm), norme des cartes ID/bancaires. Chaque carte = recto puis verso. 'Telecharger le PDF' genere directement un seul fichier PDF avec toutes les cartes (recto+verso), sans passer par la boite d'impression. Logo hors-ligne : deposez un fichier logo.png a cote de ce fichier HTML, ou utilisez le bouton Logo (une image large avec plusieurs logos bailleurs cote a cote est prise en charge). Toutes les donnees (cartes, logo, nom d'organisation, PDF genere) restent uniquement dans votre navigateur, sur cet ordinateur : rien n'est jamais envoye a un serveur.">?</span>
     </div>
   </div>
+  <div class="tb-row">
+    <div class="tb-group">
+      <label class="tb-label" for="codeProjetInput">Code Projet</label>
+      <input type="text" id="codeProjetInput" placeholder="ex: 200816">
+      <label class="tb-label" for="kitTypeInput">Type de kit</label>
+      <input type="text" id="kitTypeInput" placeholder="ex: NFI WASH">
+    </div>
+  </div>
   <div class="pdf-status" id="pdfStatus"></div>
 </div>
 
@@ -207,6 +221,7 @@
     <div class="field grow"><label for="fVillage">Village</label><input type="text" id="fVillage" value=""></div>
     <div class="field grow"><label for="fChefferie">Chefferie</label><input type="text" id="fChefferie" value=""></div>
     <div class="field grow"><label for="fSite">Site de distribution</label><input type="text" id="fSite" value=""></div>
+    <div class="field grow"><label for="fStatut">Statut</label><input type="text" id="fStatut" placeholder="ex: Chef de m&eacute;nage, PDI..."></div>
     <div class="qty-grid" id="qtyGrid"></div>
     <div class="submit-row"><button type="submit">G&eacute;n&eacute;rer la carte</button></div>
   </form>
@@ -2966,6 +2981,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
   var STORAGE_KEY = "carte_beneficiaires_v1";
   var LOGO_KEY = "carte_logo_dataurl";
   var ORG_KEY = "carte_org_name";
+  var CODE_PROJET_KEY = "carte_code_projet";
+  var KIT_TYPE_KEY = "carte_kit_type";
+  var DEFAULT_CODE_PROJET = "200816";
+  var DEFAULT_KIT_TYPE = "NFI WASH";
   var SEED = [];
   var ITEMS_SHORT = ["Bidon 20L", "Kit lave-mains", "Savon 800g", "Gobelet 700ml", "Etoffe wax", "Aquatabs", "Pot bebe", "Sac bailleur"];
   var DEFAULT_QTY = [2,1,3,3,1,1,1,1];
@@ -3029,6 +3048,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
   function buildPair(b) {
     var sexeClass = /^f/i.test(b.sexe) ? 'sexe-f' : 'sexe-m';
     var qrData = 'N' + b.num + ' - ' + b.nom + ' - ' + locLine(b);
+    var statutPill = b.statut ? '<span class="statut-pill">' + esc(b.statut) + '</span>' : '';
+    var orgNameVal = (document.getElementById('orgNameInput').value || '').trim() || 'VOTRE ORGANISATION';
+    var codeProjetVal = (document.getElementById('codeProjetInput').value || '').trim() || DEFAULT_CODE_PROJET;
+    var kitTypeVal = (document.getElementById('kitTypeInput').value || '').trim() || DEFAULT_KIT_TYPE;
 
     var wrap = document.createElement('div');
     wrap.className = 'card-pair';
@@ -3040,15 +3063,19 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
       '<div class="rc-top">' +
         '<div class="logo-box" aria-hidden="true"></div>' +
         '<div class="head-text">' +
-          '<div class="org-name">VOTRE ORGANISATION</div>' +
-          '<div class="card-title">Carte de b&eacute;n&eacute;ficiaire</div>' +
+          '<div class="org-name">' + esc(orgNameVal) + '</div>' +
+          '<div class="card-title">Jeton de distribution &mdash; Kit <span class="kit-type">' + esc(kitTypeVal) + '</span></div>' +
         '</div>' +
         '<div class="num-badge">N&deg;' + esc(b.num) + '</div>' +
+      '</div>' +
+      '<div class="rc-meta">' +
+        '<span>Code Projet&nbsp;: <b class="code-projet">' + esc(codeProjetVal) + '</b></span>' +
+        '<span>Date&nbsp;: ____/____/______</span>' +
       '</div>' +
       '<div class="rc-mid">' +
         '<div class="rc-id">' +
           '<div class="rc-name">' + esc(b.nom) + '</div>' +
-          '<span class="sexe-pill ' + sexeClass + '">' + esc(b.sexe) + '</span>' +
+          '<div class="pill-row"><span class="sexe-pill ' + sexeClass + '">' + esc(b.sexe) + '</span>' + statutPill + '</div>' +
           '<div class="loc-row">' + esc(locLine(b)) + '</div>' +
         '</div>' +
         '<div class="qr-wrap">' + qrSvg(qrData) + '</div>' +
@@ -3181,9 +3208,10 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     var village = document.getElementById('fVillage').value.trim();
     var chefferie = document.getElementById('fChefferie').value.trim();
     var site = document.getElementById('fSite').value.trim();
+    var statut = document.getElementById('fStatut').value.trim();
     var qtys = Array.prototype.map.call(qtyGrid.querySelectorAll('input'), function(inp) { return inp.value.trim(); });
 
-    var b = { num: nextNum(), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, qtys: qtys };
+    var b = { num: nextNum(), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut, qtys: qtys };
     beneficiaires.push(b);
     saveData();
 
@@ -3211,6 +3239,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     { field: 'village', test: function(h) { return h.indexOf('village') !== -1; } },
     { field: 'chefferie', test: function(h) { return h.indexOf('chefferie') !== -1; } },
     { field: 'site', test: function(h) { return h.indexOf('site') !== -1; } },
+    { field: 'statut', test: function(h) { return h.indexOf('statut') !== -1; } },
     { field: 'signature', test: function(h) { return h.indexOf('signature') !== -1; } },
     { field: 'item0', test: function(h) { return h.indexOf('bidon') !== -1; } },
     { field: 'item1', test: function(h) { return h.indexOf('lave main') !== -1 || h.indexOf('lave-main') !== -1 || (h.indexOf('kit') !== -1 && h.indexOf('seau') !== -1); } },
@@ -3280,6 +3309,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
           village: cols.village !== undefined ? String(row[cols.village] || '').trim() : '',
           chefferie: cols.chefferie !== undefined ? String(row[cols.chefferie] || '').trim() : '',
           site: cols.site !== undefined ? String(row[cols.site] || '').trim() : '',
+          statut: cols.statut !== undefined ? String(row[cols.statut] || '').trim() : '',
           qtys: qtys
         };
         beneficiaires.push(b);
@@ -3446,12 +3476,36 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     var value = (name || '').trim() || 'VOTRE ORGANISATION';
     document.querySelectorAll('.org-name').forEach(function(el) { el.textContent = value; });
   }
+  function applyCodeProjet(value) {
+    var v = (value || '').trim() || DEFAULT_CODE_PROJET;
+    document.querySelectorAll('.code-projet').forEach(function(el) { el.textContent = v; });
+  }
+  function applyKitType(value) {
+    var v = (value || '').trim() || DEFAULT_KIT_TYPE;
+    document.querySelectorAll('.kit-type').forEach(function(el) { el.textContent = v; });
+  }
 
   var savedOrg = storage.getItem(ORG_KEY);
   if (savedOrg) document.getElementById('orgNameInput').value = savedOrg;
   document.getElementById('orgNameInput').addEventListener('input', function(e) {
     applyOrgName(e.target.value);
     storage.setItem(ORG_KEY, e.target.value);
+  });
+
+  var codeProjetInput = document.getElementById('codeProjetInput');
+  var savedCodeProjet = storage.getItem(CODE_PROJET_KEY);
+  codeProjetInput.value = savedCodeProjet || DEFAULT_CODE_PROJET;
+  codeProjetInput.addEventListener('input', function(e) {
+    applyCodeProjet(e.target.value);
+    storage.setItem(CODE_PROJET_KEY, e.target.value);
+  });
+
+  var kitTypeInput = document.getElementById('kitTypeInput');
+  var savedKitType = storage.getItem(KIT_TYPE_KEY);
+  kitTypeInput.value = savedKitType || DEFAULT_KIT_TYPE;
+  kitTypeInput.addEventListener('input', function(e) {
+    applyKitType(e.target.value);
+    storage.setItem(KIT_TYPE_KEY, e.target.value);
   });
 
   function blobToDataUrl(blob) {
