@@ -12,6 +12,7 @@ import argparse
 import csv
 import json
 import os
+import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 VENDOR = os.path.join(HERE, "vendor")
@@ -22,22 +23,28 @@ ITEMS_SHORT = [
 ]
 
 
+def code_village_part(village):
+    s = re.sub(r"[^A-Za-z0-9]", "", village or "").upper()
+    return s or "SITE"
+
+
 def parse_tsv(path):
     rows = []
+    village_counters = {}
     with open(path, encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
         next(reader)
-        running_num = 0
         for r in reader:
             if len(r) < 5 or not r[3].strip():
                 continue
-            running_num += 1
-            num = r[0].strip() or f"{running_num:03d}"
             village = r[1].strip()
             chefferie = r[2].strip()
             nom = r[3].strip().strip('"').replace("\n", " ").strip()
             sexe = r[4].strip()
             qtys = [r[i].strip() if i < len(r) else "" for i in range(5, 13)]
+            vpart = code_village_part(village)
+            village_counters[vpart] = village_counters.get(vpart, 0) + 1
+            num = f"TF-{vpart}-{village_counters[vpart]:03d}"
             rows.append({
                 "num": num, "nom": nom, "sexe": sexe,
                 "village": village, "chefferie": chefferie, "site": "", "statut": "",

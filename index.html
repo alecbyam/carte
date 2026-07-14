@@ -6,27 +6,27 @@
 <style>
   :root {
     --bg:#ffffff; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
-    --accent:#276469; --accent-dark:#1a464a; --accent-bg:#e1eef0;
-    --navy:#1f6fb8; --navy-bg:#e8f2fb;
+    --accent:#018cab; --accent-dark:#016a82; --accent-bg:#e0f3f7;
+    --navy:#2f6fa8; --navy-bg:#e8f1fa;
     --pink-bg:#fdeef2; --pink-text:#a1315a; --blue-bg:#eaf1fb; --blue-text:#275c9c;
     --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08);
     color-scheme: light dark;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
-      --accent:#4fb3ba; --accent-dark:#7fd6dc; --accent-bg:#173538;
-      --navy:#6fb4ea; --navy-bg:#18324a;
+      --accent:#4dd0ea; --accent-dark:#8ae4f5; --accent-bg:#113a42;
+      --navy:#8fb8e8; --navy-bg:#1c2f45;
       --pink-bg:#3a2530; --pink-text:#e893b2;
       --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
   }
   :root[data-theme="dark"] { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
-    --accent:#4fb3ba; --accent-dark:#7fd6dc; --accent-bg:#173538;
-    --navy:#6fb4ea; --navy-bg:#18324a;
+    --accent:#4dd0ea; --accent-dark:#8ae4f5; --accent-bg:#113a42;
+    --navy:#8fb8e8; --navy-bg:#1c2f45;
     --pink-bg:#3a2530; --pink-text:#e893b2;
     --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
   :root[data-theme="light"] { --bg:#ffffff; --card-bg:#ffffff; --text:#182728; --muted:#5e7376; --border:#d3e1e2;
-    --accent:#276469; --accent-dark:#1a464a; --accent-bg:#e1eef0;
-    --navy:#1f6fb8; --navy-bg:#e8f2fb;
+    --accent:#018cab; --accent-dark:#016a82; --accent-bg:#e0f3f7;
+    --navy:#2f6fa8; --navy-bg:#e8f1fa;
     --pink-bg:#fdeef2; --pink-text:#a1315a;
     --blue-bg:#eaf1fb; --blue-text:#275c9c; --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08); }
 
@@ -3020,10 +3020,22 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
   function saveData() { storage.setItem(STORAGE_KEY, JSON.stringify(beneficiaires)); }
   var beneficiaires = loadData();
 
-  function nextNum() {
+  function codeVillagePart(village) {
+    var s = norm(village).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    return s || 'SITE';
+  }
+
+  // Numero auto-genere = concatenation TF + village + numero sequentiel (propre a ce village), ex: TF-JALUSENE-001
+  function nextNum(village) {
+    var prefix = 'TF-' + codeVillagePart(village) + '-';
     var max = 0;
-    beneficiaires.forEach(function(b) { var n = parseInt(b.num, 10); if (!isNaN(n) && n > max) max = n; });
-    return String(max + 1).padStart(3, '0');
+    beneficiaires.forEach(function(b) {
+      if (typeof b.num === 'string' && b.num.indexOf(prefix) === 0) {
+        var n = parseInt(b.num.slice(prefix.length), 10);
+        if (!isNaN(n) && n > max) max = n;
+      }
+    });
+    return prefix + String(max + 1).padStart(3, '0');
   }
 
   // ---------- QR ----------
@@ -3237,7 +3249,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     var collectivite = document.getElementById('fCollectivite').value.trim();
     var qtys = Array.prototype.map.call(qtyGrid.querySelectorAll('input'), function(inp) { return inp.value.trim(); });
 
-    var b = { num: nextNum(), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut,
+    var b = { num: nextNum(village), nom: nom, sexe: sexe, village: village, chefferie: chefferie, site: site, statut: statut,
       zoneSante: zoneSante, aireSante: aireSante, collectivite: collectivite, qtys: qtys };
     beneficiaires.push(b);
     saveData();
@@ -3332,11 +3344,12 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
         }
 
         var code = cols.code !== undefined ? String(row[cols.code] || '').trim() : '';
+        var rowVillage = cols.village !== undefined ? String(row[cols.village] || '').trim() : '';
         var b = {
-          num: code || nextNum(),
+          num: code || nextNum(rowVillage),
           nom: nom,
           sexe: cols.sexe !== undefined ? String(row[cols.sexe] || '').trim() : '',
-          village: cols.village !== undefined ? String(row[cols.village] || '').trim() : '',
+          village: rowVillage,
           chefferie: cols.chefferie !== undefined ? String(row[cols.chefferie] || '').trim() : '',
           site: cols.site !== undefined ? String(row[cols.site] || '').trim() : '',
           statut: cols.statut !== undefined ? String(row[cols.statut] || '').trim() : '',
