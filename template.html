@@ -12,13 +12,8 @@
     --shadow: 0 1px 3px rgba(15,40,45,0.12), 0 1px 2px rgba(15,40,45,0.08);
     color-scheme: light dark;
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
-      --accent:#4dd0ea; --accent-dark:#8ae4f5; --accent-bg:#113a42;
-      --navy:#8fb8e8; --navy-bg:#1c2f45;
-      --pink-bg:#3a2530; --pink-text:#e893b2;
-      --blue-bg:#1e2c3d; --blue-text:#8fb6e8; --shadow: 0 1px 4px rgba(0,0,0,0.55); }
-  }
+  /* Fond toujours blanc (y compris si le systeme est en mode sombre) : cet outil sert a produire des
+     cartes imprimables, la coherence avec le rendu papier prime sur la preference systeme. */
   :root[data-theme="dark"] { --bg:#101a1b; --card-bg:#1c2628; --text:#eaf2f2; --muted:#93aaac; --border:#324547;
     --accent:#4dd0ea; --accent-dark:#8ae4f5; --accent-bg:#113a42;
     --navy:#8fb8e8; --navy-bg:#1c2f45;
@@ -149,14 +144,14 @@
 
   .empty-hint { text-align:center; color:var(--muted); font-size:0.8rem; padding:20px; }
 
-  @page { size: 85.6mm 53.98mm; margin: 0; }
+  /* Impression groupee : grille A4, au moins 4 cartes (recto uniquement, le verso est vide) par feuille. */
+  @page { size: A4; margin: 10mm; }
   @media print {
     body { padding:0; background:#fff; }
-    .page-header, .section-card, .pair-actions { display:none !important; }
-    .card-list { max-width:100%; gap:0; }
-    .card-pair { box-shadow:none; border:none; border-radius:0; padding:0; gap:0; }
-    .rc-card, .vc-card { box-shadow:none; border-radius:0; page-break-after:always; break-after:page; width:85.6mm; height:53.98mm; }
-    .card-pair:last-child .vc-card { page-break-after:auto; break-after:auto; }
+    .page-header, .section-card, .pair-actions, .vc-card { display:none !important; }
+    .card-list { display:flex; flex-wrap:wrap; gap:4mm; max-width:100%; }
+    .card-pair { display:contents; }
+    .rc-card { box-shadow:none; break-inside:avoid; margin:0; }
   }
 </style>
 </head>
@@ -450,13 +445,13 @@
     if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
   }
 
-  function captureCard(iframe, cardEl, logoHiddenForCapture) {
+  function captureCard(iframe, cardEl, logoHiddenForCapture, scale) {
     var idoc = iframe.contentDocument;
     idoc.body.className = logoHiddenForCapture ? 'pdf-capture-no-logo' : '';
     idoc.body.innerHTML = '';
     idoc.body.appendChild(cardEl.cloneNode(true));
     return new Promise(function(resolve) { setTimeout(resolve, 20); }).then(function() {
-      return html2canvas(idoc.body.firstChild, { scale: 4, backgroundColor: null });
+      return html2canvas(idoc.body.firstChild, { scale: scale || 4, backgroundColor: null });
     });
   }
 
@@ -505,9 +500,65 @@
     renderNext();
   }
 
+  // Export en masse : grille A4 (2 x 4 = 8 cartes recto par page). Le verso etant intentionnellement
+  // vide, il n'est pas inclus ici — ca evite de generer des pages inutiles et accelere l'export.
+  function generateGridPdf(rectoCards, filename, btn) {
+    if (!rectoCards.length) { setPdfStatus('Aucune carte à exporter.', 'err'); return; }
+    if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+      setPdfStatus('Erreur : librairie PDF indisponible.', 'err');
+      return;
+    }
+
+    var CARD_W = 85.6, CARD_H = 53.98;
+    var PAGE_MARGIN = 10, GAP = 4, COLS = 2, ROWS = 4, PER_PAGE = COLS * ROWS;
+    var GRID_SCALE = 3; // suffisant pour l'impression, plus rapide que l'echelle 4 utilisee pour une carte seule
+
+    var logoHiddenForCapture = document.body.classList.contains('has-logo') && !logoCanvasSafe;
+    if (btn) btn.disabled = true;
+    setPdfStatus('Préparation du PDF… 0/' + rectoCards.length);
+
+    var pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    var iframe = openCaptureFrame();
+
+    function finish(message, cls) {
+      closeCaptureFrame(iframe);
+      setPdfStatus(message, cls);
+      if (btn) btn.disabled = false;
+    }
+
+    var i = 0;
+    function renderNext() {
+      if (i >= rectoCards.length) {
+        pdf.save(filename);
+        var pages = Math.ceil(rectoCards.length / PER_PAGE);
+        var msg = rectoCards.length + ' carte(s) sur ' + pages + ' page(s) A4 (' + PER_PAGE + '/page) — téléchargement lancé.';
+        if (logoHiddenForCapture) msg += ' Logo non inclus (fichier local hors-ligne) : importez-le via le bouton "Logo" pour qu\'il apparaisse aussi dans ce PDF.';
+        finish(msg, 'ok');
+        return;
+      }
+      var posInPage = i % PER_PAGE;
+      if (i > 0 && posInPage === 0) pdf.addPage('a4', 'portrait');
+      var col = posInPage % COLS;
+      var row = Math.floor(posInPage / COLS);
+      var x = PAGE_MARGIN + col * (CARD_W + GAP);
+      var y = PAGE_MARGIN + row * (CARD_H + GAP);
+      captureCard(iframe, rectoCards[i], logoHiddenForCapture, GRID_SCALE).then(function (canvas) {
+        var imgData = canvas.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(imgData, 'JPEG', x, y, CARD_W, CARD_H);
+        i++;
+        setPdfStatus('Génération du PDF… ' + i + '/' + rectoCards.length);
+        renderNext();
+      }).catch(function (err) {
+        console.error(err);
+        finish('Erreur pendant la génération (carte ' + (i + 1) + ') : ' + err.message, 'err');
+      });
+    }
+    renderNext();
+  }
+
   document.getElementById('downloadPdfBtn').addEventListener('click', function () {
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.rc-card, .vc-card'));
-    generateCardsPdf(cards, 'cartes_beneficiaires.pdf', this);
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.rc-card'));
+    generateGridPdf(cards, 'cartes_beneficiaires.pdf', this);
   });
 
   // ---------- add-beneficiary form ----------
