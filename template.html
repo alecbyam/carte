@@ -285,6 +285,21 @@
   function saveData() { storage.setItem(STORAGE_KEY, JSON.stringify(beneficiaires)); }
   var beneficiaires = loadData();
 
+  // Migration : les listes enregistrees par une version precedente peuvent contenir d'anciens
+  // formats de numero (001, A001, TF-JALUSENE-001, TFJAL-01...). Tout numero non conforme au
+  // format actuel TF{VIL}-NNN est renumerote automatiquement au chargement.
+  (function migrateNumbers() {
+    var FORMAT = /^TF[A-Z0-9]{1,3}-\d{3}$/;
+    var changed = false;
+    beneficiaires.forEach(function(b) {
+      if (!FORMAT.test(String(b.num || ''))) {
+        b.num = nextNum(b.village || b.chefferie || b.site);
+        changed = true;
+      }
+    });
+    if (changed) saveData();
+  })();
+
   function codeVillagePart(village) {
     var s = norm(village).toUpperCase().replace(/[^A-Z0-9]/g, '');
     return (s || 'SIT').slice(0, 3);
