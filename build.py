@@ -61,6 +61,8 @@ def main():
     qr_lib = open(os.path.join(VENDOR, "qrcode.js"), encoding="utf-8").read()
     qr_utf8 = open(os.path.join(VENDOR, "qrcode_UTF8.js"), encoding="utf-8").read()
     xlsx_lib = open(os.path.join(VENDOR, "xlsx.core.min.js"), encoding="utf-8").read()
+    html2canvas_lib = open(os.path.join(VENDOR, "html2canvas.min.js"), encoding="utf-8").read()
+    jspdf_lib = open(os.path.join(VENDOR, "jspdf.umd.min.js"), encoding="utf-8").read()
 
     template_path = os.path.join(HERE, "template.html")
     template = open(template_path, encoding="utf-8").read()
@@ -73,6 +75,8 @@ def main():
         .replace("__QR_LIB__", qr_lib)
         .replace("__QR_UTF8__", qr_utf8)
         .replace("__XLSX_LIB__", xlsx_lib)
+        .replace("__HTML2CANVAS_LIB__", html2canvas_lib)
+        .replace("__JSPDF_LIB__", jspdf_lib)
     )
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
