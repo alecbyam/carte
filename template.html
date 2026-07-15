@@ -294,11 +294,11 @@
   function saveData() { storage.setItem(STORAGE_KEY, JSON.stringify(beneficiaires)); }
   var beneficiaires = loadData();
 
-  // Renumerote toute la liste dans l'ordre, avec un compteur par village : TF{VIL}-001, 002...
+  // Renumerote toute la liste dans l'ordre, avec un compteur par site : TF{SIT}-001, 002...
   function renumberAll() {
     var counters = {};
     beneficiaires.forEach(function(b) {
-      var part = codePrefixPart(b.village, b.chefferie, b.site);
+      var part = codePrefixPart(b.site, b.chefferie, b.village);
       counters[part] = (counters[part] || 0) + 1;
       b.num = 'TF' + part + '-' + String(counters[part]).padStart(3, '0');
     });
@@ -311,25 +311,30 @@
   // une sequence propre et coherente plutot qu'un panachage ancien/nouveau.
   (function migrateNumbers() {
     var FORMAT = /^TF[A-Z]{3}-\d{3}$/;
-    var anyBad = beneficiaires.some(function(b) { return !FORMAT.test(String(b.num || '')); });
+    var anyBad = beneficiaires.some(function(b) {
+      var num = String(b.num || '');
+      // Non conforme si le format est mauvais OU si le prefixe ne correspond plus au site
+      // de distribution de la personne (ex: numeros bases sur le village par une version anterieure).
+      return !FORMAT.test(num) || num.indexOf(prefixFor(b)) !== 0;
+    });
     if (anyBad) renumberAll();
   })();
 
-  // 3 premieres LETTRES du village (les chiffres sont ignores : un village "6" ou "Zone 6"
-  // ne doit pas donner "TF6-..."). Si le village n'a aucune lettre, repli sur la chefferie
-  // puis le site, puis "SIT".
-  function codePrefixPart(village, chefferie, site) {
-    var cands = [village, chefferie, site];
+  // 3 premieres LETTRES du SITE DE DISTRIBUTION (les chiffres sont ignores). Si le site n'a
+  // aucune lettre ou est vide, repli sur la chefferie puis le village, puis "SIT".
+  function codePrefixPart(site, chefferie, village) {
+    var cands = [site, chefferie, village];
     for (var i = 0; i < cands.length; i++) {
       var t = norm(cands[i] || '').toUpperCase().replace(/[^A-Z]/g, '');
       if (t) return t.slice(0, 3);
     }
     return 'SIT';
   }
+  function prefixFor(b) { return 'TF' + codePrefixPart(b.site, b.chefferie, b.village) + '-'; }
 
-  // Numero auto-genere = TF + 3 premieres lettres du village + numero sequentiel (propre a ce village), ex: TFJAL-001
+  // Numero auto-genere = TF + 3 premieres lettres du site de distribution + numero sequentiel, ex: TFJAL-001
   function nextNum(village, chefferie, site) {
-    var prefix = 'TF' + codePrefixPart(village, chefferie, site) + '-';
+    var prefix = 'TF' + codePrefixPart(site, chefferie, village) + '-';
     var max = 0;
     beneficiaires.forEach(function(b) {
       if (typeof b.num === 'string' && b.num.indexOf(prefix) === 0) {

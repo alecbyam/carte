@@ -24,8 +24,8 @@ ITEMS_SHORT = [
 ]
 
 
-def code_village_part(*candidates):
-    # Lettres uniquement (un village "6" ne doit pas donner TF6-...) ; repli village -> chefferie -> site.
+def code_prefix_part(*candidates):
+    # Lettres uniquement ; priorite : site de distribution -> chefferie -> village.
     for cand in candidates:
         s = re.sub(r"[^A-Za-z]", "", cand or "").upper()
         if s:
@@ -35,24 +35,26 @@ def code_village_part(*candidates):
 
 def parse_tsv(path):
     rows = []
-    village_counters = {}
+    counters = {}
     with open(path, encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
         next(reader)
         for r in reader:
             if len(r) < 5 or not r[3].strip():
                 continue
-            village = r[1].strip()
-            chefferie = r[2].strip()
+            # Alignement reel de la fiche source : la colonne numero est sous "Village",
+            # r[1] est la Chefferie (Mahagi) et r[2] le Site of Distribution (Jalusene).
+            chefferie = r[1].strip()
+            site = r[2].strip()
             nom = r[3].strip().strip('"').replace("\n", " ").strip()
             sexe = r[4].strip()
             qtys = [r[i].strip() if i < len(r) else "" for i in range(5, 13)]
-            vpart = code_village_part(village, chefferie)
-            village_counters[vpart] = village_counters.get(vpart, 0) + 1
-            num = f"TF{vpart}-{village_counters[vpart]:03d}"
+            part = code_prefix_part(site, chefferie)
+            counters[part] = counters.get(part, 0) + 1
+            num = f"TF{part}-{counters[part]:03d}"
             rows.append({
                 "num": num, "nom": nom, "sexe": sexe,
-                "village": village, "chefferie": chefferie, "site": "", "statut": "",
+                "village": "", "chefferie": chefferie, "site": site, "statut": "",
                 "qtys": qtys,
             })
     return rows
