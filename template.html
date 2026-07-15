@@ -98,10 +98,15 @@
   }
   .rc-card { border-top:1mm solid var(--accent); padding:2mm 2.4mm 2mm 2.4mm; display:flex; flex-direction:column; gap:0.9mm; }
   .rc-top { display:flex; align-items:flex-start; gap:1.6mm; }
-  .logo-box { width:25mm; height:9.5mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
-    background-size:contain; background-position:center; background-repeat:no-repeat; }
-  body.has-logo .logo-box { border-color:transparent; background-color:transparent; background-image: var(--logo-url); }
-  body.pdf-capture-no-logo .logo-box { background-image:none !important; border-style:dashed !important; }
+  /* Logo en element <img> (et non en image de fond CSS) : les images de fond ne sont pas
+     imprimees par defaut par les navigateurs, ce qui faisait disparaitre le logo a l'impression. */
+  .logo-box { width:18.5mm; height:10mm; border-radius:1mm; border:0.3mm dashed var(--border); background:var(--bg); flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .logo-img { display:none; width:100%; height:100%; object-fit:contain; }
+  body.has-logo .logo-box { border-color:transparent; background:transparent; }
+  body.has-logo .logo-img { display:block; }
+  body.pdf-capture-no-logo .logo-img { display:none !important; }
+  body.pdf-capture-no-logo .logo-box { border-style:dashed !important; border-color:var(--border) !important; }
   .head-text { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:0.3mm; padding-top:0.1mm; }
   .org-name { font-size:5.2pt; font-weight:700; letter-spacing:0.02em; color:var(--accent); text-transform:uppercase;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -147,11 +152,14 @@
   /* Impression groupee : grille A4, au moins 4 cartes (recto uniquement, le verso est vide) par feuille. */
   @page { size: A4; margin: 10mm; }
   @media print {
+    /* Forcer l'impression des couleurs de fond (pastilles, badges, bordures) que les
+       navigateurs suppriment par defaut. */
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
     body { padding:0; background:#fff; }
     .page-header, .section-card, .pair-actions, .vc-card { display:none !important; }
-    .card-list { display:flex; flex-wrap:wrap; gap:4mm; max-width:100%; }
+    .card-list { display:flex; flex-direction:row; flex-wrap:wrap; gap:4mm; max-width:100%; margin:0; }
     .card-pair { display:contents; }
-    .rc-card { box-shadow:none; break-inside:avoid; margin:0; }
+    .rc-card { box-shadow:none; break-inside:avoid; margin:0; border-color:#9ab; }
   }
 </style>
 </head>
@@ -175,6 +183,7 @@
       <button id="removeLogoBtn" class="secondary">&times; Logo</button>
     </div>
     <div class="tb-group">
+      <button id="renumberBtn" class="secondary" title="Refait toute la num&eacute;rotation au format TF{VIL}-001, dans l'ordre de la liste">Renum&eacute;roter</button>
       <button id="printAllBtn" class="secondary">Imprimer toutes les cartes</button>
       <button id="downloadPdfBtn">&#11015; T&eacute;l&eacute;charger le PDF de toutes les cartes</button>
       <span class="info" title="Format CR80 (85,60 x 53,98 mm), norme des cartes ID/bancaires. Chaque carte = recto puis verso. 'Telecharger le PDF' genere directement un seul fichier PDF avec toutes les cartes (recto+verso), sans passer par la boite d'impression. Logo hors-ligne : deposez un fichier logo.png a cote de ce fichier HTML, ou utilisez le bouton Logo (une image large avec plusieurs logos bailleurs cote a cote est prise en charge). Toutes les donnees (cartes, logo, nom d'organisation, PDF genere) restent uniquement dans votre navigateur, sur cet ordinateur : rien n'est jamais envoye a un serveur.">?</span>
@@ -285,19 +294,25 @@
   function saveData() { storage.setItem(STORAGE_KEY, JSON.stringify(beneficiaires)); }
   var beneficiaires = loadData();
 
+  // Renumerote toute la liste dans l'ordre, avec un compteur par village : TF{VIL}-001, 002...
+  function renumberAll() {
+    var counters = {};
+    beneficiaires.forEach(function(b) {
+      var part = codeVillagePart(b.village || b.chefferie || b.site);
+      counters[part] = (counters[part] || 0) + 1;
+      b.num = 'TF' + part + '-' + String(counters[part]).padStart(3, '0');
+    });
+    saveData();
+  }
+
   // Migration : les listes enregistrees par une version precedente peuvent contenir d'anciens
-  // formats de numero (001, A001, TF-JALUSENE-001, TFJAL-01...). Tout numero non conforme au
-  // format actuel TF{VIL}-NNN est renumerote automatiquement au chargement.
+  // formats de numero (001, A001, TF-JALUSENE-001, TFJAL-01...), voire un melange. Des qu'un
+  // numero non conforme est detecte, TOUTE la liste est renumerotee dans l'ordre, pour garantir
+  // une sequence propre et coherente plutot qu'un panachage ancien/nouveau.
   (function migrateNumbers() {
     var FORMAT = /^TF[A-Z0-9]{1,3}-\d{3}$/;
-    var changed = false;
-    beneficiaires.forEach(function(b) {
-      if (!FORMAT.test(String(b.num || ''))) {
-        b.num = nextNum(b.village || b.chefferie || b.site);
-        changed = true;
-      }
-    });
-    if (changed) saveData();
+    var anyBad = beneficiaires.some(function(b) { return !FORMAT.test(String(b.num || '')); });
+    if (anyBad) renumberAll();
   })();
 
   function codeVillagePart(village) {
@@ -370,7 +385,7 @@
     rc.className = 'rc-card';
     rc.innerHTML =
       '<div class="rc-top">' +
-        '<div class="logo-box" aria-hidden="true"></div>' +
+        '<div class="logo-box" aria-hidden="true"><img class="logo-img" alt=""' + (currentLogoSrc ? ' src="' + currentLogoSrc + '"' : '') + '></div>' +
         '<div class="head-text">' +
           '<div class="org-name">' + esc(orgNameVal) + '</div>' +
           '<div class="card-title">Jeton de distribution &mdash; Kit <span class="kit-type">' + esc(kitTypeVal) + '</span></div>' +
@@ -431,6 +446,14 @@
   }
 
   document.getElementById('printAllBtn').addEventListener('click', function() { window.print(); });
+
+  document.getElementById('renumberBtn').addEventListener('click', function() {
+    if (!beneficiaires.length) return;
+    if (!window.confirm('Renuméroter les ' + beneficiaires.length + ' bénéficiaires au format TF{VIL}-001, dans l\'ordre de la liste ?')) return;
+    renumberAll();
+    renderAll();
+    setPdfStatus('Numérotation refaite pour ' + beneficiaires.length + ' carte(s).', 'ok');
+  });
 
   // ---------- telechargement direct du/des PDF (recto+verso), via un cadre de capture isole ----------
   // Capturer une carte depuis la page complete (des centaines de cartes deja affichees) est tres lent :
@@ -865,13 +888,20 @@
   // logoCanvasSafe: false quand le logo vient d'un fichier local (file://) charge via <img> —
   // un tel logo "tache" le canvas (restriction navigateur) et empeche l'export PDF direct.
   // Une image en data: URI (upload manuel, ou fichier local recupere via fetch) est toujours sure.
+  var currentLogoSrc = '';
   var logoCanvasSafe = true;
   function applyLogo(dataUrl, canvasSafe) {
-    root.style.setProperty('--logo-url', 'url("' + dataUrl + '")');
+    currentLogoSrc = dataUrl;
     document.body.classList.add('has-logo');
     logoCanvasSafe = canvasSafe !== false;
+    document.querySelectorAll('.logo-img').forEach(function(img) { img.src = dataUrl; });
   }
-  function clearLogo() { document.body.classList.remove('has-logo'); root.style.removeProperty('--logo-url'); logoCanvasSafe = true; }
+  function clearLogo() {
+    currentLogoSrc = '';
+    document.body.classList.remove('has-logo');
+    logoCanvasSafe = true;
+    document.querySelectorAll('.logo-img').forEach(function(img) { img.removeAttribute('src'); });
+  }
   function applyOrgName(name) {
     var value = (name || '').trim() || 'VOTRE ORGANISATION';
     document.querySelectorAll('.org-name').forEach(function(el) { el.textContent = value; });
