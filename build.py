@@ -24,9 +24,13 @@ ITEMS_SHORT = [
 ]
 
 
-def code_village_part(village):
-    s = re.sub(r"[^A-Za-z0-9]", "", village or "").upper()
-    return (s or "SIT")[:3]
+def code_village_part(*candidates):
+    # Lettres uniquement (un village "6" ne doit pas donner TF6-...) ; repli village -> chefferie -> site.
+    for cand in candidates:
+        s = re.sub(r"[^A-Za-z]", "", cand or "").upper()
+        if s:
+            return s[:3]
+    return "SIT"
 
 
 def parse_tsv(path):
@@ -43,7 +47,7 @@ def parse_tsv(path):
             nom = r[3].strip().strip('"').replace("\n", " ").strip()
             sexe = r[4].strip()
             qtys = [r[i].strip() if i < len(r) else "" for i in range(5, 13)]
-            vpart = code_village_part(village)
+            vpart = code_village_part(village, chefferie)
             village_counters[vpart] = village_counters.get(vpart, 0) + 1
             num = f"TF{vpart}-{village_counters[vpart]:03d}"
             rows.append({
